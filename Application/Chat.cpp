@@ -5,3 +5,9 @@ Chat::Chat(int max_message_num) : _max_message_num(max_message_num), _current_me
 {
     _message_array = new Message[_max_message_num];
 }
+
+Chat::~Chat()
+{
+    delete[] _message_array;
+}
+
