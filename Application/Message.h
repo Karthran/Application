@@ -1,21 +1,23 @@
 #pragma once
 #include <string>
 
+class User;
+
 class Message
 {
 public:
     Message(){};
-    Message(const std::string& message, int user_ID, const tm& message_creation_time)
-        : _message(message), _user_ID(user_ID), _message_creation_time(message_creation_time){}
+    Message(const std::string& message, const User* user, const tm& message_creation_time)
+        : _message(message), _user(user), _message_creation_time(message_creation_time){}
 
     void setMessage(const std::string& message) { _message = message; }
-    void setUserID(int user_ID) { _user_ID = user_ID; }
+    void setUser(const User* user) { _user = user; }
     void setMessageCreationTime(const tm& time) { _message_creation_time = time; }
     void setMessageEditingTime(const tm& time) { _message_editing_time = time; }
     void setEdited(bool edit) { _is_edited = edit; }
 
     const std::string& getMessage() const { return _message; }
-    int getUserID() const { return _user_ID; }
+    const User* getUser() const { return _user; }
     const tm& getMessageCreationTime() const { return _message_creation_time; }
     const tm& getMessageEditingTime() const { return _message_editing_time; }
     bool isEdited() const { return _is_edited; }
@@ -24,8 +26,8 @@ public:
 
 private:
     std::string _message{};
-    int _user_ID{0};
+    const User* _user{nullptr};
     tm _message_creation_time{};
-    tm _message_editing_time{};
     bool _is_edited = false;
+    tm _message_editing_time{};
 };

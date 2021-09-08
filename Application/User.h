@@ -4,7 +4,7 @@ class User
 {
 public:
     User() {}
-    User(const std::string& user_name, std::string& user_login, std::string& user_password, int user_ID)
+    User(const std::string& user_name, const std::string& user_login, const std::string& user_password, int user_ID)
         : _user_name(user_name), _user_login(user_login), _user_password(user_password), _user_ID(user_ID)
     {
     }
