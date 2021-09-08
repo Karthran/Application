@@ -1,62 +1,70 @@
 ﻿#include <iostream>
-#include <ctime>
-#include <iomanip>
 
-#include "Message.h"
-#include "User.h"
+#include "Application.h"
+#include "Chat.h"
+#include "Utils.h"
 
-using namespace std;
-
-int main()
+Application::Application(int user_number) : _user_number(user_number), _max_chat_number(_user_number * _user_number)
 {
-    time_t seconds = time(NULL);
-    tm time_info;
 
-    localtime_s(&time_info, &seconds);
+    _chat_array = new Chat*[_max_chat_number];// TODO _user_number * _user_number ?
+}
 
-    User user(std::string("UserName"), std::string("UserLogin"), std::string("UserPassword"), 101);
+Application::~Application()
+{
+    ///////////////////////////////////////////////////////////////////////////////////
 
-    Message message("Message", &user, time_info);
+    for (auto i{0}; i < _current_chat_number; ++i)
+    {
+        delete _chat_array[i];
+    }
+    ///////////////////////////////////////////////////////////////////////////////////
+    delete[] _chat_array;
+}
 
-    const tm& timeinfo = message.getMessageCreationTime();
+void Application::run()
+{
+    std::cout << "Wellcome to Console Chat." << std::endl;
 
-    int message_index = 123;
+    bool isContinue = true;
+    while (isContinue)
+    {
+        std::cout << "1.Sign In" << std::endl;
+        std::cout << "2.Create account" << std::endl;
+        std::cout << "3.Quit" << std::endl;
 
-    //std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
-    //std::cout << std::setw(5) << std::setfill(' ') << std::left << message_index << ".";  // TODO 
-    //std::cout  << "  Created:";
-    //std::cout << std::setw(30) << std::setfill(' ') << std::left << message.getUser()->getUserName();
-    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_hour << ":";
-    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_min << ":";
-    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_sec << "   ";
+        int res{Utils::getValue()};
 
-    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mday << "/";
-    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mon + 1 << "/";
-    //std::cout << std::setw(4) << std::setfill('0') << std::right << timeinfo.tm_year + 1900 << std::endl;
-    //std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
+        switch (res)
+        {
+            case 1: 
+                signIn(); 
+                break;
+            case 2:
+                createAccount();
+                break;
+            default:
+                isContinue = false;
+                break;
+        }
+    }
+}
 
+int Application::createAccount()
+{
+    std::cout << "Name:";
+    Utils::getBoundedString(MAX_INPUT_SIZE);
 
-    std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
+    std::cout << "Login:";
+    Utils::getBoundedString(MAX_INPUT_SIZE);
 
-    std::cout << std::setw(5) << std::setfill(' ') << std::right << message_index << ".";
-    std::cout << "  Created: ";
-    std::cout << std::setw(30) << std::setfill(' ') << std::left << message.getUser()->getUserName();
-    std::cout << std::setw(20) << std::setfill(' ');
+    std::cout << "Password:";
+    Utils::getBoundedString(MAX_INPUT_SIZE);
 
-    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_hour << ":";
-    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_min << ":";
-    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_sec << "   ";
+    return 0;
+}
 
-    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mday << "/";
-    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mon + 1 << "/";
-    std::cout << timeinfo.tm_year + 1900 << std::endl;
-    std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
-
-    std::cout << message.getMessage() << std::endl;
-    std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
-
-    //             << timeinfo.tm_sec << std::endl;
-
-    std::cin.get();
+int Application::signIn()
+{
     return 0;
 }

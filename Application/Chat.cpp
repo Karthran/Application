@@ -89,7 +89,7 @@ void Chat::addMessage(const User& user)
     std::cout << "Send message?(Y/N):";
     if (!Utils::isOK()) return;
 
-    time_t seconds = time(NULL);
+    time_t seconds{time(NULL)};
     tm timeinfo;
     localtime_s(&timeinfo, &seconds);
 
@@ -136,7 +136,7 @@ void Chat::editMessage(int message_index)
     std::cout << "Save changes?(Y/N):";
     if (!Utils::isOK()) return;
 
-    time_t seconds = time(NULL);
+    time_t seconds{time(NULL)};
     tm timeinfo;
     localtime_s(&timeinfo, &seconds);
 
