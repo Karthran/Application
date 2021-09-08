@@ -5,7 +5,7 @@
 #include "Chat.h"
 #include "Message.h"
 #include "User.h"
-
+#include "Utils.h"
 
 Chat::Chat(int max_message_num) : _max_message_num(max_message_num), _current_message_num(0)
 {
@@ -26,11 +26,11 @@ void Chat::printMessages(int first_index, int number) const
     }
 }
 
-void Chat::printMessage(int message_index) const 
+void Chat::printMessage(int message_index) const
 {
-    if (message_index < 0 || message_index >= _current_message_num) return; // TODO Exception
-    Message& message = _message_array[message_index]; 
-    
+    if (message_index < 0 || message_index >= _current_message_num) return;  // TODO Exception
+    Message& message = _message_array[message_index];
+
     const tm& timeinfo = message.getMessageCreationTime();
 
     std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
@@ -55,19 +55,15 @@ void Chat::printMessage(int message_index) const
 
 void Chat::addMessage(const User& user)
 {
-    if (_current_message_num >= _max_message_num) return; //TODO 
+    if (_current_message_num >= _max_message_num) return;  // TODO
 
     std::string new_message{};
 
     std::cout << "Input message: ";
     std::cin >> new_message;
 
-    char select;
-
     std::cout << "Send message?(Y/N):";
-    std::cin >> select;
-
-    if (select != 'Y' && select != 'y') return; //TODO
+    if (!Utils::isOK()) return; //TODO
 
     time_t seconds = time(NULL);
     tm timeinfo;
@@ -79,4 +75,3 @@ void Chat::addMessage(const User& user)
 
     ++_current_message_num;
 }
-
