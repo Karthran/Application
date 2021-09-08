@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 
 #include "Utils.h"
 
@@ -29,4 +30,15 @@ int Utils::getValue()
             return value;
         }
     }
+}
+
+void Utils::printTimeAndData(const tm& timeinfo)
+{
+    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_hour << ":";
+    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_min << ":";
+    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_sec << "   ";
+
+    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mday << "/";
+    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mon + 1 << "/";
+    std::cout << timeinfo.tm_year + 1900 << std::endl;
 }

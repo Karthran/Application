@@ -46,16 +46,34 @@ void Chat::printMessage(int message_index) const
     std::cout << std::setw(30) << std::setfill(' ') << std::left << message->getUser()->getUserName();
     std::cout << std::setw(20) << std::setfill(' ');
 
-    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_hour << ":";
-    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_min << ":";
-    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_sec << "   ";
+    Utils::printTimeAndData(timeinfo);
 
-    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mday << "/";
-    std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mon + 1 << "/";
-    std::cout << timeinfo.tm_year + 1900 << std::endl;
+    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_hour << ":";
+    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_min << ":";
+    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_sec << "   ";
+    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mday << "/";
+    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mon + 1 << "/";
+    //std::cout << timeinfo.tm_year + 1900 << std::endl;
+
     std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
 
     std::cout << message->getMessage() << std::endl;
+
+    if (message->isEdited())
+    {
+        const tm& edit_timeinfo = message->getMessageEditingTime();
+
+            Utils::printTimeAndData(edit_timeinfo);
+
+        //std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
+        //std::cout << "  Edited: ";
+        //std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_hour << ":";
+        //std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_min << ":";
+        //std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_sec << "   ";
+        //std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_mday << "/";
+        //std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_mon + 1 << "/";
+        //std::cout << timeinfo.tm_year + 1900 << std::endl;
+    }
     std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
 }
 
@@ -102,4 +120,25 @@ void Chat::deleteMessage(int message_index)
         _message_array[i] = _message_array[i + 1];
     }
     --_current_message_num;
+}
+
+void Chat::editMessage(int message_index) 
+{
+    if (message_index < 0 || message_index >= _current_message_num) return;  // TODO Exception
+
+    printMessage(message_index);
+
+    std::string new_message{};
+
+    std::cout << "Input new message: ";
+    std::cin >> new_message;
+
+    std::cout << "Save changes?(Y/N):";
+    if (!Utils::isOK()) return;
+
+    time_t seconds = time(NULL);
+    tm timeinfo;
+    localtime_s(&timeinfo, &seconds);
+
+    _message_array[message_index]->editedMessage(new_message, timeinfo);
 }
