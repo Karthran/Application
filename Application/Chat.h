@@ -21,7 +21,7 @@ public:
     int getCurrentMessageNum() const { return _current_message_num; }
 
 private:
-    Message* _message_array{nullptr};
+    Message** _message_array{nullptr};
     int _max_message_num{0};
     int _current_message_num{0};
 };
