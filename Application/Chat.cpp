@@ -11,3 +11,11 @@ Chat::~Chat()
     delete[] _message_array;
 }
 
+void Chat::printMessages(int first_index, int number) const
+{
+    for (auto i{first_index}; i < number; ++i)
+    {
+        printMessage(i);
+    }
+}
+
