@@ -53,3 +53,30 @@ void Chat::printMessage(int message_index) const
     std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
 }
 
+void Chat::addMessage(const User& user)
+{
+    if (_current_message_num >= _max_message_num) return; //TODO 
+
+    std::string new_message{};
+
+    std::cout << "Input message: ";
+    std::cin >> new_message;
+
+    char select;
+
+    std::cout << "Send message?(Y/N):";
+    std::cin >> select;
+
+    if (select != 'Y' && select != 'y') return; //TODO
+
+    time_t seconds = time(NULL);
+    tm timeinfo;
+    localtime_s(&timeinfo, &seconds);
+
+    _message_array[_current_message_num].setUser(&user);
+    _message_array[_current_message_num].setMessage(new_message);
+    _message_array[_current_message_num].setMessageCreationTime(timeinfo);
+
+    ++_current_message_num;
+}
+

@@ -55,8 +55,6 @@ int main()
     std::cout << message.getMessage() << std::endl;
     std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
 
-
-
     //             << timeinfo.tm_sec << std::endl;
 
     std::cin.get();

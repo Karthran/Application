@@ -1,6 +1,7 @@
 #pragma once
 
 class Message;
+class User;
 
 class Chat
 {
@@ -12,7 +13,7 @@ public:
 
     void printMessages(int first_index, int number) const;
     void printMessage(int message_index) const;
-    void addMessage();
+    void addMessage(const User& user);
     void deleteMessage(int message_index);
     void editMessage(int message_index);
 
