@@ -3,17 +3,25 @@
 #include "Application.h"
 #include "Chat.h"
 #include "Utils.h"
+#include "User.h"
 
-Application::Application(int user_number) : _user_number(user_number), _max_chat_number(_user_number * _user_number)
+Application::Application(int user_number) : _max_user_number(user_number), _max_chat_number(_max_user_number * _max_user_number)
 {
-
-    _chat_array = new Chat*[_max_chat_number];// TODO _user_number * _user_number ?
+    _user_array = new User*[_max_user_number];
+    _chat_array = new Chat*[_max_chat_number];  // TODO _user_number * _user_number ?
 }
 
 Application::~Application()
 {
     ///////////////////////////////////////////////////////////////////////////////////
+    for (auto i{0}; i < _current_user_number; ++i) 
+    {
+        delete _user_array[i];
+    }
+    ///////////////////////////////////////////////////////////////////////////////////
+    delete[] _user_array;
 
+    ///////////////////////////////////////////////////////////////////////////////////
     for (auto i{0}; i < _current_chat_number; ++i)
     {
         delete _chat_array[i];
@@ -37,34 +45,77 @@ void Application::run()
 
         switch (res)
         {
-            case 1: 
-                signIn(); 
-                break;
-            case 2:
-                createAccount();
-                break;
-            default:
-                isContinue = false;
-                break;
+            case 1: signIn(); break;
+            case 2: createAccount(); break;
+            default: isContinue = false; break;
         }
     }
 }
 
 int Application::createAccount()
 {
-    std::cout << "Name:";
-    Utils::getBoundedString(MAX_INPUT_SIZE);
+    bool isOK = false;
+    std::string user_name{};
+    while (!isOK)
+    {
+        std::cout << "Name(max " << MAX_INPUT_SIZE  << " letters):";
+        Utils::getBoundedString(user_name,MAX_INPUT_SIZE);
+        const std::string& (User::*get_name)() const = &User::getUserName;
+        if (checkingForStringExistence(user_name, get_name))
+        {
+            std::cout << "Please change name." << std::endl;
+        }
+        else
+        {
+            isOK = true;
+        }
+    }
 
-    std::cout << "Login:";
-    Utils::getBoundedString(MAX_INPUT_SIZE);
+    isOK = false;
+    std::string user_login;
+    while (!isOK)
+    {
+        std::cout << std::endl << "Login(max " << MAX_INPUT_SIZE << " letters):";
+        Utils::getBoundedString(user_login, MAX_INPUT_SIZE);
+        const std::string& (User::*get_login)() const = &User::getUserLogin;
+        if (checkingForStringExistence(user_login, get_login))
+        {
+            std::cout << "Please change login." << std::endl;
+        }
+        else
+        {
+            isOK = true;
+        }
+    }
 
-    std::cout << "Password:";
-    Utils::getBoundedString(MAX_INPUT_SIZE);
+    std::cout << std::endl << "Password(max " << MAX_INPUT_SIZE << " letters):";
+    std::string user_password;
+    Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
 
-    return 0;
+    std::cout << std::endl << "Create account?(Y/N):";
+    if (!Utils::isOKSelect()) return -1; //TODO change -1
+
+    _user_array[_current_user_number] = new User(user_name, user_login, user_password, _current_user_number);
+    return _current_user_number++;
 }
 
 int Application::signIn()
 {
+    std::cout << std::endl;
+    std::string user_login;
+    std::cout << std::endl << "Login:";
+    std::cin >> user_login;
+    const std::string& (User::*get_login)() const = &User::getUserLogin;
+        if (checkingForStringExistence(user_login, get_login))
+
     return 0;
+}
+
+bool Application::checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const)
+{
+    for (auto i{0}; i < _current_user_number; ++i)
+    {
+        if (string == (_user_array[i]->*get)()) return true;
+    }
+    return false;
 }

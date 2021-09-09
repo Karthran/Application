@@ -87,7 +87,7 @@ void Chat::addMessage(const User& user)
     std::cin >> new_message;
 
     std::cout << "Send message?(Y/N):";
-    if (!Utils::isOK()) return;
+    if (!Utils::isOKSelect()) return;
 
     time_t seconds{time(NULL)};
     tm timeinfo;
@@ -109,7 +109,7 @@ void Chat::deleteMessage(int message_index)
     printMessage(message_index);
 
     std::cout << "Delete message?(Y/N):";
-    if (!Utils::isOK()) return;
+    if (!Utils::isOKSelect()) return;
 
 ///////////////////////////////////////////////////////////////////////////////////
     delete _message_array[message_index];
@@ -134,7 +134,7 @@ void Chat::editMessage(int message_index)
     std::cin >> new_message;
 
     std::cout << "Save changes?(Y/N):";
-    if (!Utils::isOK()) return;
+    if (!Utils::isOKSelect()) return;
 
     time_t seconds{time(NULL)};
     tm timeinfo;

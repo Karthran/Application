@@ -1,13 +1,15 @@
 #include <iostream>
+#include <conio.h>
+#include <limits>
 #include <iomanip>
 
 #include "Utils.h"
 
-bool Utils::isOK()
+bool Utils::isOKSelect()
 {
     char select;
     std::cin >> select;
-    if (select != 'Y' && select != 'y') return false; 
+    if (select != 'Y' && select != 'y') return false;
     return true;
 }
 
@@ -43,16 +45,18 @@ void Utils::printTimeAndData(const tm& timeinfo)
     std::cout << timeinfo.tm_year + 1900 << std::endl;
 }
 
-const std::string& Utils::getBoundedString(int size) 
+void Utils::getBoundedString(std::string& string, int size, bool hidden)
 {
-    std::string string{};
-    for (auto i{0}; i < size; ++i)
+    auto c{' '}; 
+    auto i{0};
+    while ((c = _getch()) != '\r')
     {
-        std::cin >> string[i];
+        string.push_back(c);
+        if (hidden)
+            _putch('*');
+        else
+            _putch(c);
+        if(++i == size) break;
     }
-
-    std::cin.clear();                                                    // очистка флагов ошибок ввода
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // очиска буфера ввода
-
-    return string;
 }
+

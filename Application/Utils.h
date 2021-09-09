@@ -6,8 +6,8 @@
 class Utils
 {
 public:
-    static bool isOK();
+    static bool isOKSelect();
     static int getValue();
     static void printTimeAndData(const tm& timeinfo);
-    static const std::string& getBoundedString(int size);
+    static void getBoundedString(std::string& string, int size, bool hidden = false);
 };

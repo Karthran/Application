@@ -2,6 +2,8 @@
 #include <ctime>
 #include <iomanip>
 
+#include "Application.h"
+
 #include "Message.h"
 #include "User.h"
 
@@ -9,6 +11,19 @@ using namespace std;
 
 int main()
 {
+    setlocale(LC_ALL, "");
+
+    //std::string str;
+    //for (auto i{0}; i < 10; ++i)
+    //{
+    //    std::cin >> str[i];
+    //}
+
+    //std::cout << str << std::endl;
+
+    Application app(100);
+    app.run();
+
     time_t seconds = time(NULL);
     tm time_info;
 
