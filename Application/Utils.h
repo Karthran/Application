@@ -2,6 +2,7 @@
 #include <string>
 
 #define MAX_INPUT_SIZE 30
+#define UNSUCCESSFUL -1
 
 class Utils
 {

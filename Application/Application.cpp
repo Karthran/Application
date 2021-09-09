@@ -61,7 +61,7 @@ int Application::createAccount()
         std::cout << "Name(max " << MAX_INPUT_SIZE  << " letters):";
         Utils::getBoundedString(user_name,MAX_INPUT_SIZE);
         const std::string& (User::*get_name)() const = &User::getUserName;
-        if (checkingForStringExistence(user_name, get_name))
+        if (checkingForStringExistence(user_name, get_name) != UNSUCCESSFUL)
         {
             std::cout << "Please change name." << std::endl;
         }
@@ -78,7 +78,7 @@ int Application::createAccount()
         std::cout << std::endl << "Login(max " << MAX_INPUT_SIZE << " letters):";
         Utils::getBoundedString(user_login, MAX_INPUT_SIZE);
         const std::string& (User::*get_login)() const = &User::getUserLogin;
-        if (checkingForStringExistence(user_login, get_login))
+        if (checkingForStringExistence(user_login, get_login) != UNSUCCESSFUL)
         {
             std::cout << "Please change login." << std::endl;
         }
@@ -93,7 +93,7 @@ int Application::createAccount()
     Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
 
     std::cout << std::endl << "Create account?(Y/N):";
-    if (!Utils::isOKSelect()) return -1; //TODO change -1
+    if (!Utils::isOKSelect()) return UNSUCCESSFUL; 
 
     _user_array[_current_user_number] = new User(user_name, user_login, user_password, _current_user_number);
     return _current_user_number++;
@@ -102,20 +102,50 @@ int Application::createAccount()
 int Application::signIn()
 {
     std::cout << std::endl;
-    std::string user_login;
+    std::string user_login{};
     std::cout << std::endl << "Login:";
-    std::cin >> user_login;
-    const std::string& (User::*get_login)() const = &User::getUserLogin;
-        if (checkingForStringExistence(user_login, get_login))
 
-    return 0;
+    auto index{-1};
+    bool isOK = false;
+    while (!isOK)
+    {
+        std::cin >> user_login;
+        const std::string& (User::*get_login)() const = &User::getUserLogin;
+        if ((index = checkingForStringExistence(user_login, get_login)) == UNSUCCESSFUL)
+        {
+            std::cout << "Login don't exist!" << std::endl;
+            std::cout << std::endl << "Try again?(Y/N):";
+            if (!Utils::isOKSelect()) return UNSUCCESSFUL;
+            continue;
+        }
+        isOK = true;
+    }
+
+    std::string user_password{};
+    isOK = false;
+    std::cout << std::endl << "Password:";
+    while (!isOK)
+    {
+        std::cin >> user_password;
+        if (_user_array[index]->getUserPassword() != user_password)
+        {
+            std::cout << "Password don't match!" << std::endl;
+            std::cout << std::endl << "Try again?(Y/N):";
+            if (!Utils::isOKSelect()) return UNSUCCESSFUL;
+            continue;
+        }
+        isOK = true;
+    }
+    _current_user = _user_array[index];
+
+    return index;
 }
 
-bool Application::checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const)
+int Application::checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const)
 {
     for (auto i{0}; i < _current_user_number; ++i)
     {
-        if (string == (_user_array[i]->*get)()) return true;
+        if (string == (_user_array[i]->*get)()) return i;
     }
-    return false;
+    return UNSUCCESSFUL;
 }

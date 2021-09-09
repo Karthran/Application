@@ -16,10 +16,11 @@ private:
     int _current_user_number{0};
     Chat** _chat_array{nullptr};
     User** _user_array{nullptr};
+    User* _current_user{nullptr};
     int _max_chat_number{0};
     int _current_chat_number{0};
 
     int createAccount();
     int signIn();
-    bool checkingForStringExistence(const std::string& string, const std::string& (User::*get)()const);
+    int checkingForStringExistence(const std::string& string, const std::string& (User::*get)()const);
 };
