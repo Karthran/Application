@@ -26,6 +26,7 @@ private:
     int commonChat(User* user) const;
     int privateMenu(User* user);
     int privateChat(User* source_user, User* target_user);
+    int findIndexForChat(Chat* chat)const; 
     Chat* getPrivateChat(User* source_user, User* target_user)const;
     int checkingForStringExistence(const std::string& string, const std::string& (User::*get)()const)const;
 };

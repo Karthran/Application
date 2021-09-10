@@ -10,8 +10,8 @@ Application::Application(int user_number) : _max_user_number(user_number), _max_
 {
     assert(user_number && "User number must be greater than 0!");
 
-    _user_array = new User*[_max_user_number];
-    _chat_array = new Chat*[_max_chat_number];        // TODO _user_number * _user_number ?
+    _user_array = new User* [_max_user_number] {};
+    _chat_array = new Chat* [_max_chat_number] {};    // TODO _user_number * _user_number ?
     _chat_array[0] = new Chat(MAX_MESSAGES_IN_CHAT);  // _chat_array[0] allways Common Chat
 }
 
@@ -297,11 +297,11 @@ int Application::privateChat(User* source_user, User* target_user)
                         currentChat->setFirstUser(source_user);
                         currentChat->setSecondUser(target_user);
                     }
-                }
-                currentChat->addMessage(*source_user);
 
                  //_chat_array[++_current_chat_number] =
 
+                }
+                currentChat->addMessage(*source_user);
                 break;
             case 3:
             {
@@ -320,6 +320,20 @@ int Application::privateChat(User* source_user, User* target_user)
             default: isContinue = false; break;
         }
     }
+    return 0;
+}
+
+int Application::findIndexForChat(Chat* chat) const
+{
+    auto index{0};
+
+    for (auto i{0}; i < _current_chat_number; ++i)
+    {
+        if (chat->getFirstUser() > _chat_array[i]->getFirstUser()) continue;
+
+    }
+
+
     return 0;
 }
 
