@@ -20,8 +20,18 @@ public:
     int getMaxMessageNum() const { return _max_message_num; }
     int getCurrentMessageNum() const { return _current_message_num; }
 
+    const User* getFirstUser() const { return _first_user; }
+    const User* getSecondUser() const { return _second_user; }
+
+    void setFirstUser(const User* user) { _first_user = user;}
+    void setSecondUser(const User* user) { _second_user = user; }
+
+
 private:
     Message** _message_array{nullptr};
     int _max_message_num{0};
     int _current_message_num{0};
+
+    const User* _first_user{nullptr};
+    const User* _second_user{nullptr};
 };

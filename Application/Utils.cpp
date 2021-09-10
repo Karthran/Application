@@ -60,3 +60,13 @@ void Utils::getBoundedString(std::string& string, int size, bool hidden)
     }
 }
 
+bool Utils::minToMaxOrder(int& min, int& max)
+{
+    auto isSwap{false};
+    if (min > max)
+    {
+        std::swap(min, max);
+        isSwap = true;
+    }
+    return isSwap;
+}

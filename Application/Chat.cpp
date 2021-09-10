@@ -25,10 +25,11 @@ Chat::~Chat()
 
 void Chat::printMessages(int first_index, int number) const
 {
-    if (first_index < 0 || first_index >= _current_message_num) return;  // TODO Exception
+    if (first_index < 0 || first_index >= _current_message_num || number <= 0) return;  // TODO Exception
     for (auto i{first_index}; i < number; ++i)
     {
         printMessage(i);
+        if (!((i + 1) % MESSAGES_ON_PAGE)) std::cin.get();
     }
 }
 
@@ -62,8 +63,9 @@ void Chat::printMessage(int message_index) const
     if (message->isEdited())
     {
         const tm& edit_timeinfo = message->getMessageEditingTime();
-
-            Utils::printTimeAndData(edit_timeinfo);
+        std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
+        std::cout << "Edited: ";
+        Utils::printTimeAndData(edit_timeinfo);
 
         //std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
         //std::cout << "  Edited: ";
@@ -93,7 +95,7 @@ void Chat::addMessage(const User& user)
     tm timeinfo;
     localtime_s(&timeinfo, &seconds);
 
-     _message_array[_current_message_num] = new Message();
+    _message_array[_current_message_num] = new Message();
 
     _message_array[_current_message_num]->setUser(&user);
     _message_array[_current_message_num]->setMessage(new_message);
