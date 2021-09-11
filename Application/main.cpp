@@ -7,14 +7,71 @@
 #include "Message.h"
 #include "User.h"
 
+#include "Array.h"
+class TestClass
+{
+public:
+    TestClass() { std::cout << "Constructor" << std::endl; }
+    ~TestClass() { std::cout << "Destructor" << std::endl; }
+    void print() const { std::cout << "TestClass" << this << std::endl; }
+};
+
 using namespace std;
 
 int main()
 {
     setlocale(LC_ALL, "");
 
-    Application app(100);
-    app.run();
+  //  int size = 3;
+  //  Array<TestClass> _array(size);
+
+  //  for (auto i{0}; i < size; ++i)
+  //  {
+  //      // std::shared_ptr<TestClass> ptr(new TestClass());
+  //      _array[i] = std::make_shared<TestClass>();  //    ptr;
+  //  }
+  //  Array<TestClass> _array1(size);
+
+  //  _array1 = _array;
+
+  //  Array<TestClass> _array2(_array);
+
+  ////  _array2.reallocate(5);
+
+  //  _array2.resize(2);
+
+  //  _array2[1] = std::make_shared<TestClass>();
+
+  //  _array2.remove(1);
+
+  //  _array2.insertAtBeginning(std::make_shared<TestClass>());
+
+  //  _array2.insertAtEnd(std::make_shared<TestClass>());
+
+  //  _array2.insertBefore(std::make_shared<TestClass>(), 1);
+
+  // // _array2.
+
+  //  int arr_size = _array2.getArrayLength();
+
+  //  for (auto i{0}; i < size; ++i)
+  //  {
+  //      _array[i]->print();
+  //  }
+
+  //  for (auto i{0}; i < size + 1; ++i)
+  //  {
+  //      _array2[i]->print();
+  //  }
+
+     Application app(100);
+     app.run();
+
+
+     return 0;
+
+
+
 
     // std::string str;
     // for (auto i{0}; i < 10; ++i)
@@ -72,5 +129,4 @@ int main()
     ////             << timeinfo.tm_sec << std::endl;
 
     // std::cin.get();
-    return 0;
 }

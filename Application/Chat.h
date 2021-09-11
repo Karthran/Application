@@ -1,4 +1,5 @@
 #pragma once
+#include "Array.h"
 
 class Message;
 class User;
@@ -6,32 +7,32 @@ class User;
 class Chat
 {
 public:
-    Chat() {}
+    Chat() { std::cout << "Chat constr " << this << std::endl; }
     Chat(int max_message_num);
 
     ~Chat();
 
     void printMessages(int first_index, int number) const;
     void printMessage(int message_index) const;
-    void addMessage(const User& user);
+    void addMessage(std::shared_ptr<User> user);
     void deleteMessage(int message_index);
     void editMessage(int message_index);
 
     int getMaxMessageNum() const { return _max_message_num; }
     int getCurrentMessageNum() const { return _current_message_num; }
 
-    const User* getFirstUser() const { return _first_user; }
-    const User* getSecondUser() const { return _second_user; }
+    const std::shared_ptr<User> getFirstUser() const { return _first_user; }
+    const std::shared_ptr<User> getSecondUser() const { return _second_user; }
 
-    void setFirstUser(const User* user) { _first_user = user;}
-    void setSecondUser(const User* user) { _second_user = user; }
+    void setFirstUser(std::shared_ptr<User> user) { _first_user = user; }
+    void setSecondUser(std::shared_ptr<User> user) { _second_user = user; }
 
 
 private:
-    Message** _message_array{nullptr};
+    Array<Message> _message_array;
     int _max_message_num{0};
     int _current_message_num{0};
 
-    const User* _first_user{nullptr};
-    const User* _second_user{nullptr};
+    std::shared_ptr<User> _first_user{nullptr};
+    std::shared_ptr<User> _second_user{nullptr};
 };

@@ -9,18 +9,22 @@
 
 Chat::Chat(int max_message_num) : _max_message_num(max_message_num), _current_message_num(0)
 {
-    _message_array = new Message*[_max_message_num];  // TODO Exception
+    std::cout << "Chat constr " << this << std::endl;
+    //    _message_array = new Message*[_max_message_num];  // TODO Exception
+    _message_array.resize(_max_message_num);
 }
 
 Chat::~Chat()
 {
-///////////////////////////////////////////////////////////////////////////////////
-    for (auto i{0}; i < _current_message_num; ++i)
-    {
-        delete _message_array[i];
-    }
-///////////////////////////////////////////////////////////////////////////////////
-    delete[] _message_array;
+    std::cout << "Chat destr " << this << std::endl;
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    // for (auto i{0}; i < _current_message_num; ++i)
+    //{
+    //    delete _message_array[i];
+    //}
+    ///////////////////////////////////////////////////////////////////////////////////
+    // delete[] _message_array;
 }
 
 void Chat::printMessages(int first_index, int number) const
@@ -36,9 +40,9 @@ void Chat::printMessages(int first_index, int number) const
 void Chat::printMessage(int message_index) const
 {
     if (message_index < 0 || message_index >= _current_message_num) return;  // TODO Exception
-    Message* message = _message_array[message_index];
+    auto message{_message_array[message_index]};
 
-    const tm& timeinfo = message->getMessageCreationTime();
+    const tm& timeinfo{message->getMessageCreationTime()};
 
     std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
 
@@ -49,12 +53,12 @@ void Chat::printMessage(int message_index) const
 
     Utils::printTimeAndData(timeinfo);
 
-    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_hour << ":";
-    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_min << ":";
-    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_sec << "   ";
-    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mday << "/";
-    //std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mon + 1 << "/";
-    //std::cout << timeinfo.tm_year + 1900 << std::endl;
+    // std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_hour << ":";
+    // std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_min << ":";
+    // std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_sec << "   ";
+    // std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mday << "/";
+    // std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_mon + 1 << "/";
+    // std::cout << timeinfo.tm_year + 1900 << std::endl;
 
     std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
 
@@ -62,24 +66,24 @@ void Chat::printMessage(int message_index) const
 
     if (message->isEdited())
     {
-        const tm& edit_timeinfo = message->getMessageEditingTime();
+        const tm& edit_timeinfo{message->getMessageEditingTime()};
         std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
         std::cout << "Edited: ";
         Utils::printTimeAndData(edit_timeinfo);
 
-        //std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
-        //std::cout << "  Edited: ";
-        //std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_hour << ":";
-        //std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_min << ":";
-        //std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_sec << "   ";
-        //std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_mday << "/";
-        //std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_mon + 1 << "/";
-        //std::cout << timeinfo.tm_year + 1900 << std::endl;
+        // std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
+        // std::cout << "  Edited: ";
+        // std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_hour << ":";
+        // std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_min << ":";
+        // std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_sec << "   ";
+        // std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_mday << "/";
+        // std::cout << std::setw(2) << std::setfill('0') << std::right << edit_timeinfo.tm_mon + 1 << "/";
+        // std::cout << timeinfo.tm_year + 1900 << std::endl;
     }
     std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
 }
 
-void Chat::addMessage(const User& user)
+void Chat::addMessage(std::shared_ptr<User> user)
 {
     if (_current_message_num >= _max_message_num) return;  // TODO
 
@@ -95,9 +99,9 @@ void Chat::addMessage(const User& user)
     tm timeinfo;
     localtime_s(&timeinfo, &seconds);
 
-    _message_array[_current_message_num] = new Message();
+    _message_array[_current_message_num] = std::make_shared<Message>();  //    new Message();
 
-    _message_array[_current_message_num]->setUser(&user);
+    _message_array[_current_message_num]->setUser(user);
     _message_array[_current_message_num]->setMessage(new_message);
     _message_array[_current_message_num]->setMessageCreationTime(timeinfo);
 
@@ -113,9 +117,7 @@ void Chat::deleteMessage(int message_index)
     std::cout << "Delete message?(Y/N):";
     if (!Utils::isOKSelect()) return;
 
-///////////////////////////////////////////////////////////////////////////////////
-    delete _message_array[message_index];
-///////////////////////////////////////////////////////////////////////////////////
+    _message_array[message_index] = nullptr;
 
     for (auto i{message_index}; i < _current_message_num - 1; ++i)
     {
@@ -124,7 +126,7 @@ void Chat::deleteMessage(int message_index)
     --_current_message_num;
 }
 
-void Chat::editMessage(int message_index) 
+void Chat::editMessage(int message_index)
 {
     if (message_index < 0 || message_index >= _current_message_num) return;  // TODO Exception
 

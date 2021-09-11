@@ -1,15 +1,17 @@
 #pragma once
 #include <string>
+#include <iostream>
 class User
 {
 public:
-    User() {}
+    User() { std::cout << "User constr " << this << std::endl; }
     User(const std::string& user_name, const std::string& user_login, const std::string& user_password, int user_ID)
         : _user_name(user_name), _user_login(user_login), _user_password(user_password), _user_ID(user_ID)
     {
+        std::cout << "User constr " << this << std::endl;
     }
 
-    ~User() {}
+    ~User() { std::cout << "User destr " << this << std::endl; }
 
     void setUserName(const std::string& name) { _user_name = name; }
     void setUserLogin(const std::string& login) { _user_login = login; }

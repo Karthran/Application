@@ -10,28 +10,31 @@ Application::Application(int user_number) : _max_user_number(user_number), _max_
 {
     assert(user_number && "User number must be greater than 0!");
 
-    _user_array = new User* [_max_user_number] {};
-    _chat_array = new Chat* [_max_chat_number] {};    // TODO _user_number * _user_number ?
-    _chat_array[0] = new Chat(MAX_MESSAGES_IN_CHAT);  // _chat_array[0] allways Common Chat
+    //_user_array = new User* [_max_user_number] {};
+    //_chat_array = new Chat* [_max_chat_number] {};    // TODO _user_number * _user_number ?
+    //_chat_array[0] = new Chat(MAX_MESSAGES_IN_CHAT);  // _chat_array[0] allways Common Chat
+    _user_array.resize(_max_user_number);
+    _chat_array.resize(_max_chat_number);    // TODO _user_number * _user_number ?
+    _chat_array[0] = std::make_shared<Chat>(MAX_MESSAGES_IN_CHAT);  // _chat_array[0] allways Common Chat
 }
 
 Application::~Application()
 {
-    ///////////////////////////////////////////////////////////////////////////////////
-    for (auto i{0}; i < _current_user_number; ++i)
-    {
-        delete _user_array[i];
-    }
-    ///////////////////////////////////////////////////////////////////////////////////
-    delete[] _user_array;
+    /////////////////////////////////////////////////////////////////////////////////////
+    //for (auto i{0}; i < _current_user_number; ++i)
+    //{
+    //    delete _user_array[i];
+    //}
+    /////////////////////////////////////////////////////////////////////////////////////
+    //delete[] _user_array;
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    for (auto i{0}; i < _current_chat_number; ++i)
-    {
-        delete _chat_array[i];
-    }
-    ///////////////////////////////////////////////////////////////////////////////////
-    delete[] _chat_array;
+    /////////////////////////////////////////////////////////////////////////////////////
+    //for (auto i{0}; i < _current_chat_number; ++i)
+    //{
+    //    delete _chat_array[i];
+    //}
+    /////////////////////////////////////////////////////////////////////////////////////
+    //delete[] _chat_array;
 }
 
 void Application::run()
@@ -99,7 +102,7 @@ int Application::createAccount()
     std::cout << std::endl << "Create account?(Y/N):";
     if (!Utils::isOKSelect()) return UNSUCCESSFUL;
 
-    _user_array[_current_user_number] = new User(user_name, user_login, user_password, _current_user_number);
+    _user_array[_current_user_number] = std::make_shared<User>(user_name, user_login, user_password, _current_user_number);
     return ++_current_user_number;
 }
 
@@ -148,7 +151,7 @@ int Application::signIn()
     return index;
 }
 
-int Application::selectCommonOrPrivate(User* user)
+int Application::selectCommonOrPrivate(std::shared_ptr<User> user)
 {
     bool isContinue = true;
     while (isContinue)
@@ -170,7 +173,7 @@ int Application::selectCommonOrPrivate(User* user)
     return 0;
 }
 
-int Application::commonChat(User* user) const
+int Application::commonChat(std::shared_ptr<User> user) const
 {
     bool isContinue = true;
     while (isContinue)
@@ -186,7 +189,7 @@ int Application::commonChat(User* user) const
         switch (res)
         {
             case 1: _chat_array[0]->printMessages(0, _chat_array[0]->getCurrentMessageNum()); break;
-            case 2: _chat_array[0]->addMessage(*user); break;
+            case 2: _chat_array[0]->addMessage(user); break;
             case 3:
             {
                 std::cout << "Select message number for editing: ";
@@ -208,7 +211,7 @@ int Application::commonChat(User* user) const
     return 0;
 }
 
-int Application::privateMenu(User* user)
+int Application::privateMenu(std::shared_ptr<User> user)
 {
     bool isContinue = true;
     while (isContinue)
@@ -258,7 +261,7 @@ int Application::privateMenu(User* user)
     return 0;
 }
 
-int Application::privateChat(User* source_user, User* target_user)
+int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<User> target_user)
 {
     auto isContinue{true};
 
@@ -282,7 +285,7 @@ int Application::privateChat(User* source_user, User* target_user)
             case 2:
                 if (!currentChat)
                 {
-                    currentChat = new Chat(MAX_MESSAGES_IN_CHAT);
+                    currentChat = std::make_shared<Chat>(MAX_MESSAGES_IN_CHAT);
                     auto first_user{source_user->getUserID()};
                     auto second_user{target_user->getUserID()};
                     auto isSwap(Utils::minToMaxOrder(first_user, second_user));
@@ -301,7 +304,7 @@ int Application::privateChat(User* source_user, User* target_user)
                  //_chat_array[++_current_chat_number] =
 
                 }
-                currentChat->addMessage(*source_user);
+                currentChat->addMessage(source_user);
                 break;
             case 3:
             {
@@ -323,7 +326,7 @@ int Application::privateChat(User* source_user, User* target_user)
     return 0;
 }
 
-int Application::findIndexForChat(Chat* chat) const
+int Application::findIndexForChat(std::shared_ptr<Chat> chat) const
 {
     auto index{0};
 
@@ -332,12 +335,10 @@ int Application::findIndexForChat(Chat* chat) const
         if (chat->getFirstUser() > _chat_array[i]->getFirstUser()) continue;
 
     }
-
-
     return 0;
 }
 
-Chat* Application::getPrivateChat(User* source_user, User* target_user) const
+std::shared_ptr<Chat> Application::getPrivateChat(std::shared_ptr<User> source_user, std::shared_ptr<User> target_user) const
 {
     auto first_user{source_user->getUserID()};
     auto second_user{target_user->getUserID()};
@@ -357,7 +358,7 @@ int Application::checkingForStringExistence(const std::string& string, const std
 {
     for (auto i{0}; i < _current_user_number; ++i)
     {
-        if (string == (_user_array[i]->*get)()) return i;
+        if (string == (_user_array[i].get()->*get)()) return i;
     }
     return UNSUCCESSFUL;
 }
