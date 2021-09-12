@@ -63,7 +63,7 @@ void Chat::addMessage(std::shared_ptr<User> user)
 {
     std::string new_message{};
 
-    std::cout << "Input message: ";
+    std::cout << std::endl << "Input message: ";
     std::getline(std::cin, new_message);
 
     std::cout << "Send message?(Y/N):";

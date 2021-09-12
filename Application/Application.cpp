@@ -19,10 +19,11 @@ void Application::run()
     bool isContinue = true;
     while (isContinue)
     {
+        std::cout << std::endl;
         std::cout << "1.Sign In" << std::endl;
         std::cout << "2.Create account" << std::endl;
         std::cout << "3.Quit" << std::endl;
-
+        std::cout << "Your choice?: ";
         int res{Utils::getValue()};
 
         switch (res)
@@ -40,6 +41,8 @@ int Application::createAccount()
     std::string user_name{};
     while (!isOK)
     {
+        std::cout << std::endl;
+        std::cout << "Create account:" << std::endl;
         std::cout << "Name(max " << MAX_INPUT_SIZE << " letters):";
         Utils::getBoundedString(user_name, MAX_INPUT_SIZE);
         const std::string& (User::*get_name)() const = &User::getUserName;
@@ -84,9 +87,10 @@ int Application::createAccount()
 int Application::signIn()
 {
     std::cout << std::endl;
-    std::string user_login{};
-    std::cout << std::endl << "Login:";
+    std::cout << "Sign In:" << std::endl;
 
+    std::cout << "Login:";
+    std::string user_login{};
     auto index{-1};
     bool isOK = false;
     while (!isOK)
@@ -116,7 +120,7 @@ int Application::signIn()
             if (!Utils::isOKSelect()) return UNSUCCESSFUL;
             continue;
         }
-        std::cout << std::endl << std::endl;
+        std::cout << std::endl;
         isOK = true;
     }
 
@@ -130,9 +134,12 @@ int Application::selectCommonOrPrivate(std::shared_ptr<User> user)
     bool isContinue = true;
     while (isContinue)
     {
+        std::cout << std::endl;
+        std::cout << "Select chat type:" << std::endl;
         std::cout << "1.Common chat" << std::endl;
         std::cout << "2.Private chat" << std::endl;
         std::cout << "3.Sign Out" << std::endl;
+        std::cout << "Your choice?: ";
 
         int res{Utils::getValue()};
 
@@ -152,28 +159,34 @@ int Application::commonChat(std::shared_ptr<User> user) const
     bool isContinue = true;
     while (isContinue)
     {
+        std::cout << std::endl;
+        std::cout << "Common Chat" << std::endl;
         std::cout << "1.View chat" << std::endl;
         std::cout << "2.Add message" << std::endl;
         std::cout << "3.Edit message" << std::endl;
         std::cout << "4.Delete message" << std::endl;
         std::cout << "5.Exit" << std::endl;
+        std::cout << "Your choice?: ";
 
         int res{Utils::getValue()};
 
         switch (res)
         {
-            case 1: _chat_array[0]->printMessages(0, _chat_array[0]->getCurrentMessageNum()); break;
+            case 1:
+                std::cout << std::endl;
+                _chat_array[0]->printMessages(0, _chat_array[0]->getCurrentMessageNum());
+                break;
             case 2: _chat_array[0]->addMessage(user); break;
             case 3:
             {
-                std::cout << "Select message number for editing: ";
+                std::cout << std::endl << "Select message number for editing: ";
                 int message_number{Utils::getValue()};
                 _chat_array[0]->editMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
             }
             break;
             case 4:
             {
-                std::cout << "Select message number for deleting: ";
+                std::cout << std::endl << "Select message number for deleting: ";
                 int message_number{Utils::getValue()};
                 _chat_array[0]->deleteMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
             }
@@ -190,15 +203,19 @@ int Application::privateMenu(std::shared_ptr<User> user)
     bool isContinue = true;
     while (isContinue)
     {
-        std::cout << std::endl << "1.View chat users names" << std::endl;
+        std::cout << std::endl;
+        std::cout << "Private Chat" << std::endl;
+        std::cout << "1.View chat users names" << std::endl;
         std::cout << "2.Select target user name" << std::endl;
         std::cout << "3.Exit" << std::endl;
+        std::cout << "Your choice?: ";
 
         int res{Utils::getValue()};
         switch (res)
         {
             case 1:
             {
+                std::cout << std::endl;
                 for (auto i{0}; i < _current_user_number; ++i)
                 {
                     std::cout << i + 1 << "." << _user_array[i]->getUserName()
@@ -214,7 +231,7 @@ int Application::privateMenu(std::shared_ptr<User> user)
                 bool isOK = false;
                 while (!isOK)
                 {
-                    std::cout << "Input target user name:";
+                    std::cout <<  std::endl << "Input target user name:";
                     std::string user_name;
                     std::cin >> user_name;
                     const std::string& (User::*get_name)() const = &User::getUserName;
@@ -244,18 +261,25 @@ int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<
 
     while (isContinue)
     {
+        std::cout << std::endl;
+        std::cout << "Private Chat" << std::endl;
         std::cout << "1.View chat" << std::endl;
         std::cout << "2.Add message" << std::endl;
         std::cout << "3.Edit message" << std::endl;
         std::cout << "4.Delete message" << std::endl;
         std::cout << "5.Exit" << std::endl;
+        std::cout << "Your choice?: ";
 
         int res{Utils::getValue()};
 
         switch (res)
         {
             case 1:
-                if (currentChat) currentChat->printMessages(0, currentChat->getCurrentMessageNum());
+                if (currentChat)
+                {
+                    std::cout << std::endl;
+                    currentChat->printMessages(0, currentChat->getCurrentMessageNum());
+                }
                 break;
             case 2:
                 if (!currentChat)
@@ -282,7 +306,7 @@ int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<
                 break;
             case 3:
             {
-                std::cout << "Select message number for editing: ";
+                std::cout << std::endl << "Select message number for editing: ";
                 int message_number{Utils::getValue()};
                 if (currentChat)
                     currentChat->editMessage(source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
@@ -290,7 +314,7 @@ int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<
             break;
             case 4:
             {
-                std::cout << "Select message number for deleting: ";
+                std::cout << std::endl << "Select message number for deleting: ";
                 int message_number{Utils::getValue()};
                 if (currentChat)
                     currentChat->deleteMessage(
