@@ -21,9 +21,9 @@ int main()
 {
     setlocale(LC_ALL, "");
 
-    int size = 20;
-    std::cout << "\033[1;4;42;31mbold red text\033[0m\n";
-    std::cin >> size;
+    //int size = 20;
+    //std::cout << "\033[1;4;42;31mbold red text\033[0m\n";
+    //std::cin >> size;
 
 
     Application app;

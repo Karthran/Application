@@ -6,9 +6,10 @@
 #include "Utils.h"
 #include "User.h"
 
-Application::Application() 
+Application::Application()
 {
-    _chat_array.insertBefore(std::make_shared<Chat>(), 0);//    [0] = std::make_shared<Chat>(MAX_MESSAGES_IN_CHAT);  // _chat_array[0] allways Common Chat
+    _chat_array.insertBefore(
+        std::make_shared<Chat>(), 0);  //    [0] = std::make_shared<Chat>(MAX_MESSAGES_IN_CHAT);  // _chat_array[0] allways Common Chat
 }
 
 void Application::run()
@@ -76,7 +77,7 @@ int Application::createAccount()
     std::cout << std::endl << "Create account?(Y/N):";
     if (!Utils::isOKSelect()) return UNSUCCESSFUL;
 
-    _user_array.insertBefore(std::make_shared<User>(user_name, user_login, user_password, _current_user_number),_current_user_number);
+    _user_array.insertBefore(std::make_shared<User>(user_name, user_login, user_password, _current_user_number), _current_user_number);
     return ++_current_user_number;
 }
 
@@ -104,7 +105,7 @@ int Application::signIn()
 
     std::string user_password{};
     isOK = false;
-    std::cout <<  "Password:";
+    std::cout << "Password:";
     while (!isOK)
     {
         Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
@@ -167,14 +168,14 @@ int Application::commonChat(std::shared_ptr<User> user) const
             {
                 std::cout << "Select message number for editing: ";
                 int message_number{Utils::getValue()};
-                _chat_array[0]->editMessage(user, message_number);
+                _chat_array[0]->editMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
             }
             break;
             case 4:
             {
                 std::cout << "Select message number for deleting: ";
                 int message_number{Utils::getValue()};
-                _chat_array[0]->deleteMessage(user, message_number);
+                _chat_array[0]->deleteMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
             }
             break;
             default: isContinue = false; break;
@@ -200,8 +201,9 @@ int Application::privateMenu(std::shared_ptr<User> user)
             {
                 for (auto i{0}; i < _current_user_number; ++i)
                 {
-                    std::cout << i << "." << _user_array[i]->getUserName() << std::endl;
-                    if (!((i + 1) % LINE_TO_PAGE)) std::cin.get();
+                    std::cout << i + 1 << "." << _user_array[i]->getUserName()
+                              << std::endl;                         // array's indices begin from 0, Output indices begin from 1
+                    if (!((i + 1) % LINE_TO_PAGE)) std::cin.get();  //  Suspend via LINE_TO_PAGE lines
                 }
             };
             break;
@@ -282,14 +284,17 @@ int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<
             {
                 std::cout << "Select message number for editing: ";
                 int message_number{Utils::getValue()};
-                if (currentChat) currentChat->editMessage(source_user, message_number);
+                if (currentChat)
+                    currentChat->editMessage(source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
             }
             break;
             case 4:
             {
                 std::cout << "Select message number for deleting: ";
                 int message_number{Utils::getValue()};
-                if (currentChat) currentChat->deleteMessage(source_user, message_number);
+                if (currentChat)
+                    currentChat->deleteMessage(
+                        source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
             }
             break;
             default: isContinue = false; break;
@@ -300,13 +305,13 @@ int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<
 
 int Application::findIndexForChat(std::shared_ptr<Chat> chat) const
 {
-    auto index{1}; // _chat_array[0] - Allways Common_Chat
+    auto index{1};  // _chat_array[0] - Allways Common_Chat
     auto i{1};
     for (; i < _current_chat_number; ++i)
     {
         if (chat->getFirstUser()->getUserID() > _chat_array[i]->getFirstUser()->getUserID()) continue;
         if (chat->getSecondUser()->getUserID() > _chat_array[i]->getSecondUser()->getUserID()) continue;
-        return i; // 
+        return i;  //
     }
     return i;
 }

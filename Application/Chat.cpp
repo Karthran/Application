@@ -24,7 +24,7 @@ void Chat::printMessages(int first_index, int number) const
     for (auto i{first_index}; i < number; ++i)
     {
         printMessage(i);
-        if (!((i + 1) % MESSAGES_ON_PAGE)) std::cin.get();
+        if (!((i + 1) % MESSAGES_ON_PAGE)) std::cin.get(); // Suspend via MESSAGES_ON_PAGE messages
     }
 }
 
@@ -38,7 +38,7 @@ void Chat::printMessage(int message_index) const
 
     std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
 
-    std::cout << std::setw(5) << std::setfill(' ') << std::right << message_index << ".";
+    std::cout << std::setw(5) << std::setfill(' ') << std::right << message_index + 1 << "."; // array's indices begin from 0, Output indices begin from 1
     std::cout << "  Created: ";
     std::cout << std::setw(30) << std::setfill(' ') << std::left << message->getUser()->getUserName();
     std::cout << std::setw(20) << std::setfill(' ');
