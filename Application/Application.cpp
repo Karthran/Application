@@ -146,13 +146,14 @@ int Application::selectCommonOrPrivate(std::shared_ptr<User> user)
     while (isContinue)
     {
         std::cout << std::endl;
-        std::cout << "Select chat type:" << std::endl;
-        std::cout << "1.Common chat" << std::endl;
-        std::cout << "2.Private chat" << std::endl;
-        std::cout << "3.Sign Out" << std::endl;
-        std::cout << "Your choice?: ";
+        std::cout << BOLDYELLOW << UNDER_LINE "Select chat type:" << RESET << std::endl;
+        std::cout << BOLDGREEN "1." << RESET << "Common chat" << std::endl;
+        std::cout << BOLDGREEN "2." << RESET << "Private chat" << std::endl;
+        std::cout << BOLDGREEN "3." << RESET << "Sign Out" << std::endl;
+        std::cout << YELLOW  << "Your choice?: " << BOLDGREEN;
 
         int res{Utils::getValue()};
+        std::cout << RESET;
 
         switch (res)
         {
