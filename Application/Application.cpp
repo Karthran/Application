@@ -94,7 +94,7 @@ int Application::createAccount()
 int Application::signIn()
 {
     std::cout << std::endl;
-    std::cout << BOLDYELLOW << UNDER_LINE << "Sign In:" << std::endl << RESET;
+    std::cout << BOLDYELLOW << UNDER_LINE << "Sign In:" << RESET << std::endl;
 
     std::string user_login{};
     auto index{-1};
@@ -147,10 +147,10 @@ int Application::selectCommonOrPrivate(std::shared_ptr<User> user)
     {
         std::cout << std::endl;
         std::cout << BOLDYELLOW << UNDER_LINE "Select chat type:" << RESET << std::endl;
-        std::cout << BOLDGREEN "1." << RESET << "Common chat" << std::endl;
-        std::cout << BOLDGREEN "2." << RESET << "Private chat" << std::endl;
-        std::cout << BOLDGREEN "3." << RESET << "Sign Out" << std::endl;
-        std::cout << YELLOW  << "Your choice?: " << BOLDGREEN;
+        std::cout << BOLDGREEN << "1." << RESET << "Common chat" << std::endl;
+        std::cout << BOLDGREEN << "2." << RESET << "Private chat" << std::endl;
+        std::cout << BOLDGREEN << "3." << RESET << "Sign Out" << std::endl;
+        std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
 
         int res{Utils::getValue()};
         std::cout << RESET;
@@ -172,15 +172,16 @@ int Application::commonChat(std::shared_ptr<User> user) const
     while (isContinue)
     {
         std::cout << std::endl;
-        std::cout << "Common Chat" << std::endl;
-        std::cout << "1.View chat" << std::endl;
-        std::cout << "2.Add message" << std::endl;
-        std::cout << "3.Edit message" << std::endl;
-        std::cout << "4.Delete message" << std::endl;
-        std::cout << "5.Exit" << std::endl;
-        std::cout << "Your choice?: ";
+        std::cout << BOLDYELLOW << UNDER_LINE << "Common Chat" << RESET << std::endl;
+        std::cout << BOLDGREEN << "1." << RESET << "View chat" << std::endl;
+        std::cout << BOLDGREEN << "2." << RESET << "Add message" << std::endl;
+        std::cout << BOLDGREEN << "3." << RESET << "Edit message" << std::endl;
+        std::cout << BOLDGREEN << "4." << RESET << "Delete message" << std::endl;
+        std::cout << BOLDGREEN << "5." << RESET << "Exit" << std::endl;
+        std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
 
         int res{Utils::getValue()};
+        std::cout << RESET;
 
         switch (res)
         {
@@ -191,15 +192,17 @@ int Application::commonChat(std::shared_ptr<User> user) const
             case 2: _chat_array[0]->addMessage(user); break;
             case 3:
             {
-                std::cout << std::endl << "Select message number for editing: ";
+                std::cout << std::endl << YELLOW << "Select message number for editing: " << BOLDGREEN;
                 int message_number{Utils::getValue()};
+                std::cout << RESET;
                 _chat_array[0]->editMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
             }
             break;
             case 4:
             {
-                std::cout << std::endl << "Select message number for deleting: ";
+                std::cout << std::endl << YELLOW << "Select message number for deleting: " << BOLDGREEN;
                 int message_number{Utils::getValue()};
+                std::cout << RESET;
                 _chat_array[0]->deleteMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
             }
             break;
@@ -216,13 +219,15 @@ int Application::privateMenu(std::shared_ptr<User> user)
     while (isContinue)
     {
         std::cout << std::endl;
-        std::cout << "Private Chat" << std::endl;
-        std::cout << "1.View chat users names" << std::endl;
-        std::cout << "2.Select target user name" << std::endl;
-        std::cout << "3.Exit" << std::endl;
-        std::cout << "Your choice?: ";
+        std::cout << BOLDYELLOW << UNDER_LINE << "Private Chat" << RESET << std::endl;
+        std::cout << BOLDGREEN << "1." << RESET << "View chat users names" << std::endl;
+        std::cout << BOLDGREEN << "2." << RESET << "Select target user name" << std::endl;
+        std::cout << BOLDGREEN << "3." << RESET << "Exit" << std::endl;
+        std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
 
         int res{Utils::getValue()};
+        std::cout << RESET;
+
         switch (res)
         {
             case 1:
@@ -243,14 +248,15 @@ int Application::privateMenu(std::shared_ptr<User> user)
                 bool isOK = false;
                 while (!isOK)
                 {
-                    std::cout << std::endl << "Input target user name:";
+                    std::cout << std::endl << RESET << YELLOW << "Input target user name: " << BOLDGREEN;
                     std::string user_name;
                     std::cin >> user_name;
+                    std::cout << RESET;
                     const std::string& (User::*get_name)() const = &User::getUserName;
                     if ((index = checkingForStringExistence(user_name, get_name)) == UNSUCCESSFUL)
                     {
-                        std::cout << "User don't exist!" << std::endl;
-                        std::cout << std::endl << "Try again?(Y/N):";
+                        std::cout << RED << "User don't exist!" << std::endl;
+                        std::cout << std::endl << BOLDYELLOW << "Try again?(Y/N):" << BOLDGREEN;
                         if (!Utils::isOKSelect()) break;
                         continue;
                     }
