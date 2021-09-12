@@ -6,6 +6,7 @@
 
 #include "Message.h"
 #include "User.h"
+#include "Utils.h"
 
 #include "Array.h"
 class TestClass
@@ -22,7 +23,7 @@ int main()
     setlocale(LC_ALL, "");
 
     //int size = 20;
-    //std::cout << "\033[1;4;42;31mbold red text\033[0m\n";
+    //std::cout << BOLDRED << UNDER_LINE << "bold red text" << RESET;
     //std::cin >> size;
 
 

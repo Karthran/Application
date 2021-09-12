@@ -14,17 +14,18 @@ Application::Application()
 
 void Application::run()
 {
-    std::cout << "Wellcome to Console Chat." << std::endl;
+    std::cout << BOLDYELLOW << UNDER_LINE << "Wellcome to Console Chat!" << RESET << std::endl;
 
     bool isContinue = true;
     while (isContinue)
     {
         std::cout << std::endl;
-        std::cout << "1.Sign In" << std::endl;
-        std::cout << "2.Create account" << std::endl;
-        std::cout << "3.Quit" << std::endl;
-        std::cout << "Your choice?: ";
+        std::cout << BOLDGREEN << "1." << RESET << "Sign In" << std::endl;
+        std::cout << BOLDGREEN << "2." << RESET << "Create account" << std::endl;
+        std::cout << BOLDGREEN << "3." << RESET << "Quit" << std::endl;
+        std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
         int res{Utils::getValue()};
+        std::cout << RESET;
 
         switch (res)
         {
@@ -231,7 +232,7 @@ int Application::privateMenu(std::shared_ptr<User> user)
                 bool isOK = false;
                 while (!isOK)
                 {
-                    std::cout <<  std::endl << "Input target user name:";
+                    std::cout << std::endl << "Input target user name:";
                     std::string user_name;
                     std::cin >> user_name;
                     const std::string& (User::*get_name)() const = &User::getUserName;
