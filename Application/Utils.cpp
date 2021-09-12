@@ -49,6 +49,7 @@ void Utils::getBoundedString(std::string& string, int size, bool hidden)
 {
     auto c{' '};
     auto i{0};
+    string.erase();
     while ((c = _getch()) != '\r')
     {
         string.push_back(c);

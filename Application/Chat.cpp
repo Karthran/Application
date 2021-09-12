@@ -36,27 +36,27 @@ void Chat::printMessage(int message_index) const
 
     const tm& timeinfo{message->getMessageCreationTime()};
 
-    std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
+    std::cout << BOLDCYAN << std::setw(120) << std::setfill('-') << "-" <<  std::endl;
 
-    std::cout << std::setw(5) << std::setfill(' ') << std::right << message_index + 1 << "."; // array's indices begin from 0, Output indices begin from 1
-    std::cout << "  Created: ";
-    std::cout << std::setw(30) << std::setfill(' ') << std::left << message->getUser()->getUserName();
-    std::cout << std::setw(20) << std::setfill(' ');
+    std::cout << std::setw(5) << std::setfill(' ') << std::right <<  BOLDGREEN << message_index + 1 << "." << RESET; // array's indices begin from 0, Output indices begin from 1
+    std::cout << YELLOW << "  Created: ";
+    std::cout << BOLDYELLOW << std::setw(MAX_INPUT_SIZE) << std::setfill(' ') << std::left << message->getUser()->getUserName();
+    std::cout << std::setw(20) << std::setfill(' ') << RESET << YELLOW;
 
     Utils::printTimeAndData(timeinfo);
 
-    std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
+    std::cout <<  CYAN << std::setw(120) << std::setfill('-') << "-" <<  std::endl;
 
-    std::cout << message->getMessage() << std::endl;
+    std::cout << BOLDYELLOW << message->getMessage() << RESET << std::endl;
 
     if (message->isEdited())
     {
         const tm& edit_timeinfo{message->getMessageEditingTime()};
-        std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
-        std::cout << "Edited: ";
+        std::cout << CYAN << std::setw(120) << std::setfill('-') << "-" << std::endl;
+        std::cout << YELLOW  << "Edited: ";
         Utils::printTimeAndData(edit_timeinfo);
     }
-    std::cout << std::setw(120) << std::setfill('-') << "-" << std::endl;
+    std::cout << BOLDCYAN << std::setw(120) << std::setfill('-') << "-" << RESET << std::endl;
 }
 
 void Chat::addMessage(std::shared_ptr<User> user)
