@@ -40,16 +40,18 @@ int Application::createAccount()
 {
     bool isOK = false;
     std::string user_name{};
+    std::cout << std::endl;
+    std::cout << BOLDYELLOW << UNDER_LINE << "Create account:" << RESET << std::endl;
     while (!isOK)
     {
-        std::cout << std::endl;
-        std::cout << "Create account:" << std::endl;
         std::cout << "Name(max " << MAX_INPUT_SIZE << " letters):";
+        std::cout << BOLDGREEN;
         Utils::getBoundedString(user_name, MAX_INPUT_SIZE);
+        std::cout << RESET;
         const std::string& (User::*get_name)() const = &User::getUserName;
         if (checkingForStringExistence(user_name, get_name) != UNSUCCESSFUL)
         {
-            std::cout << "Please change name." << std::endl;
+            std::cout << std::endl << RED << "Please change name!" << RESET << std::endl;
         }
         else
         {
@@ -62,11 +64,13 @@ int Application::createAccount()
     while (!isOK)
     {
         std::cout << std::endl << "Login(max " << MAX_INPUT_SIZE << " letters):";
+        std::cout << BOLDGREEN;
         Utils::getBoundedString(user_login, MAX_INPUT_SIZE);
+        std::cout << RESET;
         const std::string& (User::*get_login)() const = &User::getUserLogin;
         if (checkingForStringExistence(user_login, get_login) != UNSUCCESSFUL)
         {
-            std::cout << std::endl << "Please change login." << std::endl;
+            std::cout << std::endl << RED << "Please change login." << RESET ;
         }
         else
         {
@@ -76,9 +80,11 @@ int Application::createAccount()
 
     std::cout << std::endl << "Password(max " << MAX_INPUT_SIZE << " letters):";
     std::string user_password;
+    std::cout << BOLDGREEN;
     Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
+    std::cout << RESET;
 
-    std::cout << std::endl << "Create account?(Y/N):";
+    std::cout << BOLDYELLOW << std::endl << "Create account?(Y/N): " << BOLDGREEN;
     if (!Utils::isOKSelect()) return UNSUCCESSFUL;
 
     _user_array.insertBefore(std::make_shared<User>(user_name, user_login, user_password, _current_user_number), _current_user_number);
