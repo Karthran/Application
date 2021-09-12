@@ -23,7 +23,7 @@ public:
     void remove(int index);
     void insertAtBeginning(std::shared_ptr<T> value);
     void insertAtEnd(std::shared_ptr<T> value);
-    int findValue(T& value);
+    int findValue(std::shared_ptr<T> value);
     int getArrayLength() const;
 
 private:
@@ -95,7 +95,7 @@ void Array<T>::reallocate(int newLength)
 
     erase();
     _length = newLength;
-    std::shared_ptr<std::shared_ptr<T>[]> ptr(new std::shared_ptr<T>[_length]);
+    std::shared_ptr<std::shared_ptr<T>[]> ptr(new std::shared_ptr<T>[_length] {});
     _data = ptr;
 }
 
@@ -107,7 +107,7 @@ void Array<T>::resize(int newLength)
 
     int totalLength = (_length > newLength) ? newLength : _length;
 
-    std::shared_ptr<std::shared_ptr<T>[]> newPtr { new std::shared_ptr<T>[ newLength ] };
+    std::shared_ptr<std::shared_ptr<T>[]> newPtr { new std::shared_ptr<T>[newLength] {} };
 
     for (int i{0}; i < totalLength; ++i)
     {
@@ -171,7 +171,7 @@ void Array<T>::insertAtEnd(std::shared_ptr<T> value)
 }
 
 template <typename T>
-int Array<T>::findValue(T& value)
+int Array<T>::findValue(std::shared_ptr<T> value)
 {
     for (int i{0}; i < _length; ++i)
     {

@@ -23,8 +23,8 @@ int Utils::getValue()
         {
             std::cin.clear();                                                    // очистка флагов ошибок ввода
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // очиска буфера ввода
-            std::cout << "Введено не правильное значение!" << std::endl;
-            std::cout << "Повторите ввод: ";
+            std::cout << "Incorrect value entered!" << std::endl;
+            std::cout << "Try again: ";
         }
         else
         {
@@ -47,7 +47,7 @@ void Utils::printTimeAndData(const tm& timeinfo)
 
 void Utils::getBoundedString(std::string& string, int size, bool hidden)
 {
-    auto c{' '}; 
+    auto c{' '};
     auto i{0};
     while ((c = _getch()) != '\r')
     {
@@ -56,8 +56,21 @@ void Utils::getBoundedString(std::string& string, int size, bool hidden)
             _putch('*');
         else
             _putch(c);
-        if(++i == size) break;
+        if (++i == size)
+        {
+            while (_getch() != '\r')
+            {
+            }
+            break;
+        }
     }
+}
+
+void Utils::getString(std::string& string, int size)
+{
+    char char_string[MAX_INPUT_SIZE];
+    std::cin.getline(char_string, size);
+    string = char_string;
 }
 
 bool Utils::minToMaxOrder(int& min, int& max)

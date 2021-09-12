@@ -14,5 +14,6 @@ public:
     static int getValue();
     static void printTimeAndData(const tm& timeinfo);
     static void getBoundedString(std::string& string, int size, bool hidden = false);
+    static void getString(std::string& string, int size);
     static bool minToMaxOrder(int& min, int& max);
 };

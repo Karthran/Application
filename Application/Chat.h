@@ -7,16 +7,14 @@ class User;
 class Chat
 {
 public:
-    Chat() { std::cout << "Chat constr " << this << std::endl; }
-    Chat(int max_message_num);
-
+    Chat();
     ~Chat();
 
     void printMessages(int first_index, int number) const;
     void printMessage(int message_index) const;
     void addMessage(std::shared_ptr<User> user);
-    void deleteMessage(int message_index);
-    void editMessage(int message_index);
+    void deleteMessage(std::shared_ptr<User> user, int message_index);
+    void editMessage(std::shared_ptr<User> user, int message_index);
 
     int getMaxMessageNum() const { return _max_message_num; }
     int getCurrentMessageNum() const { return _current_message_num; }
@@ -29,7 +27,7 @@ public:
 
 
 private:
-    Array<Message> _message_array;
+    Array<Message> _message_array{};
     int _max_message_num{0};
     int _current_message_num{0};
 

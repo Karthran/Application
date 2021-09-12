@@ -8,19 +8,15 @@ class User;
 class Application
 {
 public:
-    Application(int user_number);
-    ~Application();
+    Application();
 
     void run();
 
 private:
-    int _max_user_number{0};
     int _current_user_number{0};
     Array<Chat> _chat_array;
     Array<User> _user_array;
-    // User* _current_user{nullptr};
-    int _max_chat_number{0};
-    int _current_chat_number{0};  // Common chat will be created in constructor
+    int _current_chat_number{1};  // Common chat will be created in constructor
 
     int createAccount();
     int signIn();
