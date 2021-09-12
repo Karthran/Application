@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <cassert>
+#include <iomanip>
 
 #include "Application.h"
 #include "Chat.h"
@@ -221,8 +222,9 @@ int Application::privateMenu(std::shared_ptr<User> user)
         std::cout << std::endl;
         std::cout << BOLDYELLOW << UNDER_LINE << "Private Chat" << RESET << std::endl;
         std::cout << BOLDGREEN << "1." << RESET << "View chat users names" << std::endl;
-        std::cout << BOLDGREEN << "2." << RESET << "Select target user name" << std::endl;
-        std::cout << BOLDGREEN << "3." << RESET << "Exit" << std::endl;
+        std::cout << BOLDGREEN << "2." << RESET << "Select target user by name" << std::endl;
+        std::cout << BOLDGREEN << "3." << RESET << "Select target user  by ID" << std::endl;
+        std::cout << BOLDGREEN << "4." << RESET << "Exit" << std::endl;
         std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
 
         int res{Utils::getValue()};
@@ -233,12 +235,17 @@ int Application::privateMenu(std::shared_ptr<User> user)
             case 1:
             {
                 std::cout << std::endl;
+                std::cout << BOLDGREEN << std::setw(5) << std::setfill(' ') << std::right << "ID"
+                          << "." << BOLDYELLOW << std::setw(MAX_INPUT_SIZE) << std::setfill(' ') << std::left << "User Name" << std::endl;
+
                 for (auto i{0}; i < _current_user_number; ++i)
                 {
-                    std::cout << i + 1 << "." << _user_array[i]->getUserName()
+                    std::cout << BOLDGREEN << std::setw(5) << std::setfill(' ') << std::right << i + 1 << "." << BOLDYELLOW
+                              << std::setw(MAX_INPUT_SIZE) << std::setfill(' ') << std::left << _user_array[i]->getUserName()
                               << std::endl;                         // array's indices begin from 0, Output indices begin from 1
                     if (!((i + 1) % LINE_TO_PAGE)) std::cin.get();  //  Suspend via LINE_TO_PAGE lines
                 }
+                std::cout << RESET;
             };
             break;
             case 2:
@@ -248,7 +255,7 @@ int Application::privateMenu(std::shared_ptr<User> user)
                 bool isOK = false;
                 while (!isOK)
                 {
-                    std::cout << std::endl << RESET << YELLOW << "Input target user name: " << BOLDGREEN;
+                    std::cout << std::endl << RESET << YELLOW << "Input target user name: " << BOLDYELLOW;
                     std::string user_name;
                     std::cin >> user_name;
                     std::cout << RESET;
@@ -263,6 +270,15 @@ int Application::privateMenu(std::shared_ptr<User> user)
                     isOK = true;
                 }
                 privateChat(user, _user_array[index]);
+            }
+            break;
+            case 3:
+            {
+                std::cout << std::endl << RESET << YELLOW << "Input target user ID: " << BOLDGREEN;
+                int user_ID;
+                auto index{Utils::getValue()};
+                std::cout << RESET;
+                privateChat(user, _user_array[index - 1]);// array's indices begin from 0, Output indices begin from 1
             }
             break;
             default: isContinue = false; break;
@@ -280,15 +296,16 @@ int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<
     while (isContinue)
     {
         std::cout << std::endl;
-        std::cout << "Private Chat" << std::endl;
-        std::cout << "1.View chat" << std::endl;
-        std::cout << "2.Add message" << std::endl;
-        std::cout << "3.Edit message" << std::endl;
-        std::cout << "4.Delete message" << std::endl;
-        std::cout << "5.Exit" << std::endl;
-        std::cout << "Your choice?: ";
+        std::cout << BOLDYELLOW << UNDER_LINE << "Private Chat" << RESET << std::endl;
+        std::cout << BOLDGREEN << "1." << RESET << "View chat" << std::endl;
+        std::cout << BOLDGREEN << "2." << RESET << "Add message" << std::endl;
+        std::cout << BOLDGREEN << "3." << RESET << "Edit message" << std::endl;
+        std::cout << BOLDGREEN << "4." << RESET << "Delete message" << std::endl;
+        std::cout << BOLDGREEN << "5." << RESET << "Exit" << std::endl;
+        std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
 
         int res{Utils::getValue()};
+        std::cout << RESET;
 
         switch (res)
         {
@@ -324,16 +341,18 @@ int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<
                 break;
             case 3:
             {
-                std::cout << std::endl << "Select message number for editing: ";
+                std::cout << std::endl << RESET << YELLOW << "Select message number for editing: " << BOLDGREEN;
                 int message_number{Utils::getValue()};
+                std::cout << RESET;
                 if (currentChat)
                     currentChat->editMessage(source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
             }
             break;
             case 4:
             {
-                std::cout << std::endl << "Select message number for deleting: ";
+                std::cout << std::endl << RESET << YELLOW << "Select message number for deleting: " << BOLDGREEN;
                 int message_number{Utils::getValue()};
+                std::cout << RESET;
                 if (currentChat)
                     currentChat->deleteMessage(
                         source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1

@@ -38,7 +38,8 @@ void Chat::printMessage(int message_index) const
 
     std::cout << BOLDCYAN << std::setw(120) << std::setfill('-') << "-" <<  std::endl;
 
-    std::cout << std::setw(5) << std::setfill(' ') << std::right <<  BOLDGREEN << message_index + 1 << "." << RESET; // array's indices begin from 0, Output indices begin from 1
+    std::cout << BOLDGREEN << std::setw(5) << std::setfill(' ') << std::right << message_index + 1 << "."
+                                            << RESET;  // array's indices begin from 0, Output indices begin from 1
     std::cout << YELLOW << "  Created: ";
     std::cout << BOLDYELLOW << std::setw(MAX_INPUT_SIZE) << std::setfill(' ') << std::left << message->getUser()->getUserName();
     std::cout << std::setw(20) << std::setfill(' ') << RESET << YELLOW;
@@ -63,11 +64,12 @@ void Chat::addMessage(std::shared_ptr<User> user)
 {
     std::string new_message{};
 
-    std::cout << std::endl << "Input message: ";
+    std::cout << std::endl << YELLOW << "Input message: " << BOLDGREEN;
     std::getline(std::cin, new_message);
-
-    std::cout << "Send message?(Y/N):";
+    std::cout << RESET;
+    std::cout << BOLDYELLOW << "Send message?(Y/N):" << BOLDGREEN;
     if (!Utils::isOKSelect()) return;
+    std::cout << RESET;
 
     time_t seconds{time(NULL)};
     tm timeinfo;
@@ -90,8 +92,9 @@ void Chat::deleteMessage(std::shared_ptr<User> user, int message_index)
 
     printMessage(message_index);
 
-    std::cout << "Delete message?(Y/N):";
+    std::cout << BOLDYELLOW << "Delete message?(Y/N):" << BOLDGREEN;
     if (!Utils::isOKSelect()) return;
+    std::cout << RESET;
 
     _message_array.remove(message_index);
 
@@ -108,11 +111,13 @@ void Chat::editMessage(std::shared_ptr<User> user, int message_index)
 
     std::string new_message{};
 
-    std::cout << "Input new message: ";
+    std::cout << YELLOW << "Input new message: " << BOLDGREEN;
     std::getline(std::cin, new_message);
+    std::cout << RESET;
 
-    std::cout << "Save changes?(Y/N):";
+    std::cout << BOLDYELLOW << "Save changes?(Y/N):" << BOLDGREEN;
     if (!Utils::isOKSelect()) return;
+    std::cout << RESET;
 
     time_t seconds{time(NULL)};
     tm timeinfo;
