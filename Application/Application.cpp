@@ -70,7 +70,7 @@ int Application::createAccount()
         const std::string& (User::*get_login)() const = &User::getUserLogin;
         if (checkingForStringExistence(user_login, get_login) != UNSUCCESSFUL)
         {
-            std::cout << std::endl << RED << "Please change login." << RESET ;
+            std::cout << std::endl << RED << "Please change login." << RESET;
         }
         else
         {
@@ -94,20 +94,22 @@ int Application::createAccount()
 int Application::signIn()
 {
     std::cout << std::endl;
-    std::cout << "Sign In:" << std::endl;
+    std::cout << BOLDYELLOW << UNDER_LINE << "Sign In:" << std::endl << RESET;
 
     std::string user_login{};
     auto index{-1};
     bool isOK = false;
     while (!isOK)
     {
-        std::cout << "Login:";
+        std::cout << RESET << "Login:";
+        std::cout << BOLDGREEN;
         std::cin >> user_login;
+        std::cout << RESET;
         const std::string& (User::*get_login)() const = &User::getUserLogin;
         if ((index = checkingForStringExistence(user_login, get_login)) == UNSUCCESSFUL)
         {
-            std::cout << "Login don't exist!" << std::endl;
-            std::cout << std::endl << "Try again?(Y/N):";
+            std::cout << RED << "Login don't exist!" << std::endl;
+            std::cout << BOLDYELLOW << std::endl << "Try again?(Y/N):" << BOLDGREEN;
             if (!Utils::isOKSelect()) return UNSUCCESSFUL;
             continue;
         }
@@ -118,12 +120,14 @@ int Application::signIn()
     isOK = false;
     while (!isOK)
     {
-        std::cout << "Password:";
+        std::cout << RESET << "Password:";
+        std::cout << BOLDGREEN;
         Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
+        std::cout << RESET;
         if (_user_array[index]->getUserPassword() != user_password)
         {
-            std::cout << std::endl << "Password don't match!" << std::endl;
-            std::cout << std::endl << "Try again?(Y/N):";
+            std::cout << std::endl << RED << "Password don't match!" << std::endl;
+            std::cout << BOLDYELLOW << std::endl << "Try again?(Y/N):" << BOLDGREEN;
             if (!Utils::isOKSelect()) return UNSUCCESSFUL;
             continue;
         }
