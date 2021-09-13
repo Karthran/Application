@@ -20,15 +20,11 @@ void Application::run()
     bool isContinue = true;
     while (isContinue)
     {
-        std::cout << std::endl;
-        std::cout << BOLDGREEN << "1." << RESET << "Sign In" << std::endl;
-        std::cout << BOLDGREEN << "2." << RESET << "Create account" << std::endl;
-        std::cout << BOLDGREEN << "3." << RESET << "Quit" << std::endl;
-        std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
-        int res{Utils::getValue()};
-        std::cout << RESET;
+        std::string menu_arr[] = {"Main menu", "Sign In", "Create account", "Quit"};
 
-        switch (res)
+        auto menu_item{menu(menu_arr, 4)};
+
+        switch (menu_item)
         {
             case 1: signIn(); break;
             case 2: createAccount(); break;
@@ -477,4 +473,22 @@ int Application::checkingForStringExistence(const std::string& string, const std
         if (string == (_user_array[i].get()->*get)()) return i;
     }
     return UNSUCCESSFUL;
+}
+
+int Application::menu(std::string* string_arr, int size)
+{
+    if (size <= 0) return UNSUCCESSFUL;
+
+    std::cout << std::endl;
+    std::cout << BOLDYELLOW << UNDER_LINE << string_arr[0] << RESET << std::endl;  // index 0 is Menu Name
+
+    for (auto i{1}; i < size; ++i)
+    {
+        std::cout << BOLDGREEN << i << "." << RESET << string_arr[i] << std::endl;
+    }
+    std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
+    int menu_item{Utils::getValue()};
+    std::cout << RESET;
+
+    return menu_item;
 }

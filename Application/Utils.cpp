@@ -15,7 +15,7 @@ bool Utils::isOKSelect()
 
 int Utils::getValue()
 {
-    auto value{0};
+    auto value{UNSUCCESSFUL};
     while (true)
     {
         std::cin >> value;
