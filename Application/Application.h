@@ -27,5 +27,5 @@ private:
     int findIndexForChat(std::shared_ptr<Chat> chat) const; /*Finds index in the _chat_array to insert new Chat*/
     std::shared_ptr<Chat> getPrivateChat(std::shared_ptr<User> source_user, std::shared_ptr<User> target_user) const;
     int checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const; /*Searches for matching line*/
-    int menu(std::string* string_arr, int size); /* string_arr{0] is Menu Name , printed with underline and without number*/
+    int menu(std::string* string_arr, int size) const; /* string_arr{0] is Menu Name , printed with underline and without number*/
 };

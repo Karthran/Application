@@ -20,7 +20,7 @@ void Application::run()
     bool isContinue = true;
     while (isContinue)
     {
-        std::string menu_arr[] = {"Main menu", "Sign In", "Create account", "Quit"};
+        std::string menu_arr[] = {"Main menu:", "Sign In", "Create account", "Quit"};
 
         auto menu_item{menu(menu_arr, 4)};
 
@@ -168,17 +168,11 @@ int Application::selectCommonOrPrivate(std::shared_ptr<User> user)
     bool isContinue = true;
     while (isContinue)
     {
-        std::cout << std::endl;
-        std::cout << BOLDYELLOW << UNDER_LINE "Select chat type:" << RESET << std::endl;
-        std::cout << BOLDGREEN << "1." << RESET << "Common chat" << std::endl;
-        std::cout << BOLDGREEN << "2." << RESET << "Private chat" << std::endl;
-        std::cout << BOLDGREEN << "3." << RESET << "Sign Out" << std::endl;
-        std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
+        std::string menu_arr[] = {"Select chat type:", "Common chat", "Private chat", "Sign Out"};
 
-        int res{Utils::getValue()};
-        std::cout << RESET;
+        auto menu_item{menu(menu_arr, 4)};
 
-        switch (res)
+        switch (menu_item)
         {
             case 1: commonChat(user); break;
             case 2: privateMenu(user); break;
@@ -194,19 +188,11 @@ int Application::commonChat(std::shared_ptr<User> user) const
     bool isContinue = true;
     while (isContinue)
     {
-        std::cout << std::endl;
-        std::cout << BOLDYELLOW << UNDER_LINE << "Common Chat" << RESET << std::endl;
-        std::cout << BOLDGREEN << "1." << RESET << "View chat" << std::endl;
-        std::cout << BOLDGREEN << "2." << RESET << "Add message" << std::endl;
-        std::cout << BOLDGREEN << "3." << RESET << "Edit message" << std::endl;
-        std::cout << BOLDGREEN << "4." << RESET << "Delete message" << std::endl;
-        std::cout << BOLDGREEN << "5." << RESET << "Exit" << std::endl;
-        std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
+        std::string menu_arr[] = {"Common Chat:", "View chat", "Add message", "Edit message", "Delete message", "Exit"};
 
-        int res{Utils::getValue()};
-        std::cout << RESET;
+        auto menu_item{menu(menu_arr, 6)};
 
-        switch (res)
+        switch (menu_item)
         {
             case 1:
                 std::cout << std::endl;
@@ -264,18 +250,12 @@ int Application::privateMenu(std::shared_ptr<User> user)
     bool isContinue = true;
     while (isContinue)
     {
-        std::cout << std::endl;
-        std::cout << BOLDYELLOW << UNDER_LINE << "Private Chat" << RESET << std::endl;
-        std::cout << BOLDGREEN << "1." << RESET << "View chat users names" << std::endl;
-        std::cout << BOLDGREEN << "2." << RESET << "Select target user by name" << std::endl;
-        std::cout << BOLDGREEN << "3." << RESET << "Select target user  by ID" << std::endl;
-        std::cout << BOLDGREEN << "4." << RESET << "Exit" << std::endl;
-        std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
+        std::string menu_arr[] = {
+            "Private Chat:", "View chat users names", "Select target user by name", "Select target user by ID", "Exit"};
 
-        int res{Utils::getValue()};
-        std::cout << RESET;
+        auto menu_item{menu(menu_arr, 5)};
 
-        switch (res)
+        switch (menu_item)
         {
             case 1:
             {
@@ -347,19 +327,11 @@ int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<
 
     while (isContinue)
     {
-        std::cout << std::endl;
-        std::cout << BOLDYELLOW << UNDER_LINE << "Private Chat" << RESET << std::endl;
-        std::cout << BOLDGREEN << "1." << RESET << "View chat" << std::endl;
-        std::cout << BOLDGREEN << "2." << RESET << "Add message" << std::endl;
-        std::cout << BOLDGREEN << "3." << RESET << "Edit message" << std::endl;
-        std::cout << BOLDGREEN << "4." << RESET << "Delete message" << std::endl;
-        std::cout << BOLDGREEN << "5." << RESET << "Exit" << std::endl;
-        std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
+        std::string menu_arr[] = {"Private Chat:", "View chat", "Add message", "Edit message", "Delete message", "Exit"};
 
-        int res{Utils::getValue()};
-        std::cout << RESET;
+        auto menu_item{menu(menu_arr, 6)};
 
-        switch (res)
+        switch (menu_item)
         {
             case 1:
                 if (currentChat)
@@ -475,7 +447,7 @@ int Application::checkingForStringExistence(const std::string& string, const std
     return UNSUCCESSFUL;
 }
 
-int Application::menu(std::string* string_arr, int size)
+int Application::menu(std::string* string_arr, int size) const
 {
     if (size <= 0) return UNSUCCESSFUL;
 
