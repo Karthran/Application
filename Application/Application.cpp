@@ -45,7 +45,7 @@ int Application::createAccount()
     std::cout << BOLDYELLOW << UNDER_LINE << "Create account:" << RESET << std::endl;
     while (!isOK)
     {
-        std::cout << "Name(max " << MAX_INPUT_SIZE << " letters):";
+        std::cout << "Name(max " << MAX_INPUT_SIZE << " letters): ";
         std::cout << BOLDGREEN;
         Utils::getBoundedString(user_name, MAX_INPUT_SIZE);
         std::cout << RESET;
@@ -64,7 +64,7 @@ int Application::createAccount()
     std::string user_login;
     while (!isOK)
     {
-        std::cout << std::endl << "Login(max " << MAX_INPUT_SIZE << " letters):";
+        std::cout << std::endl << "Login(max " << MAX_INPUT_SIZE << " letters): ";
         std::cout << BOLDGREEN;
         Utils::getBoundedString(user_login, MAX_INPUT_SIZE);
         std::cout << RESET;
@@ -79,12 +79,30 @@ int Application::createAccount()
         }
     }
 
-    std::cout << std::endl << "Password(max " << MAX_INPUT_SIZE << " letters):";
+    isOK = false;
     std::string user_password;
-    std::cout << BOLDGREEN;
-    Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
-    std::cout << RESET;
+    while (!isOK)
+    {
+        std::cout << std::endl << "Password(max " << MAX_INPUT_SIZE << " letters): ";
+        std::cout << BOLDGREEN;
+        Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
+        std::cout << RESET;
 
+        std::cout << std::endl << "Re-enter your password: ";
+        std::cout << BOLDGREEN;
+
+        std::string check_user_password;
+        Utils::getBoundedString(check_user_password, MAX_INPUT_SIZE, true);
+        std::cout << RESET;
+        if (user_password != check_user_password)
+        {
+            std::cout << std::endl << RED << "Password don't match!" << RESET;
+        }
+        else
+        {
+            isOK = true;
+        }
+    }
     std::cout << BOLDYELLOW << std::endl << "Create account?(Y/N): " << BOLDGREEN;
     if (!Utils::isOKSelect()) return UNSUCCESSFUL;
 
