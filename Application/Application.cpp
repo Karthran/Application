@@ -6,11 +6,11 @@
 #include "Chat.h"
 #include "Utils.h"
 #include "User.h"
+#include "BadException.h"
 
 Application::Application()
 {
-    _chat_array.insertBefore(
-        std::make_shared<Chat>(), 0);  //    [0] = std::make_shared<Chat>(MAX_MESSAGES_IN_CHAT);  // _chat_array[0] allways Common Chat
+    _chat_array.insertBefore(std::make_shared<Chat>(), 0);  // _chat_array[0] allways Common Chat
 }
 
 void Application::run()
@@ -88,8 +88,16 @@ int Application::createAccount()
     std::cout << BOLDYELLOW << std::endl << "Create account?(Y/N): " << BOLDGREEN;
     if (!Utils::isOKSelect()) return UNSUCCESSFUL;
 
-    _user_array.insertBefore(std::make_shared<User>(user_name, user_login, user_password, _current_user_number), _current_user_number);
-    return ++_current_user_number;
+    try
+    {
+        _user_array.insertBefore(std::make_shared<User>(user_name, user_login, user_password, _current_user_number), _current_user_number);
+        return ++_current_user_number;
+    }
+    catch (std::exception& e)
+    {
+        std::cout << BOLDRED << e.what() << RESET << std::endl;
+    }
+    return UNSUCCESSFUL;
 }
 
 int Application::signIn()
@@ -190,13 +198,29 @@ int Application::commonChat(std::shared_ptr<User> user) const
                 std::cout << std::endl;
                 _chat_array[0]->printMessages(0, _chat_array[0]->getCurrentMessageNum());
                 break;
-            case 2: _chat_array[0]->addMessage(user); break;
+            case 2:
+                try
+                {
+                    _chat_array[0]->addMessage(user);
+                }
+                catch (std::exception& e)
+                {
+                    std::cout << BOLDRED << e.what() << RESET << std::endl;
+                }
+                break;
             case 3:
             {
                 std::cout << std::endl << YELLOW << "Select message number for editing: " << BOLDGREEN;
                 int message_number{Utils::getValue()};
                 std::cout << RESET;
-                _chat_array[0]->editMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+                try
+                {
+                    _chat_array[0]->editMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+                }
+                catch (std::exception& e)
+                {
+                    std::cout << BOLDRED << e.what() << RESET << std::endl;
+                }
             }
             break;
             case 4:
@@ -204,7 +228,14 @@ int Application::commonChat(std::shared_ptr<User> user) const
                 std::cout << std::endl << YELLOW << "Select message number for deleting: " << BOLDGREEN;
                 int message_number{Utils::getValue()};
                 std::cout << RESET;
-                _chat_array[0]->deleteMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+                try
+                {
+                    _chat_array[0]->deleteMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+                }
+                catch (std::exception& e)
+                {
+                    std::cout << BOLDRED << e.what() << RESET << std::endl;
+                }
             }
             break;
             default: isContinue = false; break;
@@ -278,7 +309,14 @@ int Application::privateMenu(std::shared_ptr<User> user)
                 int user_ID;
                 auto index{Utils::getValue()};
                 std::cout << RESET;
-                privateChat(user, _user_array[index - 1]);// array's indices begin from 0, Output indices begin from 1
+                try
+                {
+                    privateChat(user, _user_array[index - 1]);  // array's indices begin from 0, Output indices begin from 1
+                }
+                catch (std::exception& e)
+                {
+                    std::cout << BOLDRED << e.what() << RESET << std::endl;
+                }
             }
             break;
             default: isContinue = false; break;
@@ -334,8 +372,15 @@ int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<
                         currentChat->setFirstUser(source_user);
                         currentChat->setSecondUser(target_user);
                     }
-                    _chat_array.insertBefore(currentChat, findIndexForChat(currentChat));
-                    ++_current_chat_number;
+                    try
+                    {
+                        _chat_array.insertBefore(currentChat, findIndexForChat(currentChat));
+                        ++_current_chat_number;
+                    }
+                    catch (std::exception& e)
+                    {
+                        std::cout << BOLDRED << e.what() << RESET << std::endl;
+                    }
                 }
                 currentChat->addMessage(source_user);
                 break;
@@ -344,8 +389,15 @@ int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<
                 std::cout << std::endl << RESET << YELLOW << "Select message number for editing: " << BOLDGREEN;
                 int message_number{Utils::getValue()};
                 std::cout << RESET;
-                if (currentChat)
-                    currentChat->editMessage(source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+                if (currentChat) try
+                    {
+                        currentChat->editMessage(
+                            source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+                    }
+                    catch (std::exception& e)
+                    {
+                        std::cout << BOLDRED << e.what() << RESET << std::endl;
+                    }
             }
             break;
             case 4:
@@ -353,9 +405,16 @@ int Application::privateChat(std::shared_ptr<User> source_user, std::shared_ptr<
                 std::cout << std::endl << RESET << YELLOW << "Select message number for deleting: " << BOLDGREEN;
                 int message_number{Utils::getValue()};
                 std::cout << RESET;
-                if (currentChat)
-                    currentChat->deleteMessage(
-                        source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+                if (currentChat) try
+                    {
+
+                        currentChat->deleteMessage(
+                            source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+                    }
+                    catch (std::exception& e)
+                    {
+                        std::cout << BOLDRED << e.what() << RESET << std::endl;
+                    }
             }
             break;
             default: isContinue = false; break;

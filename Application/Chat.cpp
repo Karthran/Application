@@ -19,7 +19,7 @@ Chat::~Chat()
 
 void Chat::printMessages(int first_index, int number) const
 {
-    if (first_index < 0 || first_index >= _current_message_num || number <= 0) return;  // TODO Exception
+//    if (first_index < 0 || first_index >= _current_message_num || number <= 0) return;  // TODO Exception
 
     for (auto i{first_index}; i < number; ++i)
     {
@@ -30,7 +30,7 @@ void Chat::printMessages(int first_index, int number) const
 
 void Chat::printMessage(int message_index) const
 {
-    if (message_index < 0 || message_index >= _current_message_num) return;  // TODO Exception
+//   if (message_index < 0 || message_index >= _current_message_num) return;  // TODO Exception
 
     auto message{_message_array[message_index]};
 
@@ -86,7 +86,7 @@ void Chat::addMessage(std::shared_ptr<User> user)
 
 void Chat::deleteMessage(std::shared_ptr<User> user, int message_index)
 {
-    if (message_index < 0 || message_index >= _current_message_num) return;  // TODO Exception
+ //   if (message_index < 0 || message_index >= _current_message_num) return;  // TODO Exception
 
     if (user != _message_array[message_index]->getUser()) return;
 
@@ -103,7 +103,7 @@ void Chat::deleteMessage(std::shared_ptr<User> user, int message_index)
 
 void Chat::editMessage(std::shared_ptr<User> user, int message_index)
 {
-    if (message_index < 0 || message_index >= _current_message_num) return;  // TODO Exception
+//    if (message_index < 0 || message_index >= _current_message_num) return;  // TODO Exception
 
     if (user != _message_array[message_index]->getUser()) return;
 
