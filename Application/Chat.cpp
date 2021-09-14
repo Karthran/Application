@@ -56,7 +56,7 @@ void Chat::printMessage(int message_index) const
     std::cout << BOLDCYAN << std::setw(120) << std::setfill('-') << "-" << RESET << std::endl;
 }
 
-void Chat::addMessage(std::shared_ptr<User> user)
+void Chat::addMessage(const std::shared_ptr<User>& user)
 {
     std::string new_message{};
 
@@ -76,7 +76,7 @@ void Chat::addMessage(std::shared_ptr<User> user)
     ++_current_message_num;
 }
 
-void Chat::deleteMessage(std::shared_ptr<User> user, int message_index)
+void Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index)
 {
 
     if (user != _message_array[message_index]->getUser()) return;
@@ -92,7 +92,7 @@ void Chat::deleteMessage(std::shared_ptr<User> user, int message_index)
     --_current_message_num;
 }
 
-void Chat::editMessage(std::shared_ptr<User> user, int message_index)
+void Chat::editMessage(const std::shared_ptr<User>& user, int message_index)
 {
 
     if (user != _message_array[message_index]->getUser()) return;

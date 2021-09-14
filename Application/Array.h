@@ -19,11 +19,11 @@ public:
     std::shared_ptr<T>& operator[](int index) const;
     void reallocate(int newLength);
     void resize(int newLength);
-    void insertBefore(std::shared_ptr<T> value, int index);
+    void insertBefore(const std::shared_ptr<T>& value, int index);
     void remove(int index);
-    void insertAtBeginning(std::shared_ptr<T> value);
-    void insertAtEnd(std::shared_ptr<T> value);
-    int findValue(std::shared_ptr<T> value);
+    void insertAtBeginning(const std::shared_ptr<T>& value);
+    void insertAtEnd(const std::shared_ptr<T>& value);
+    int findValue(const std::shared_ptr<T>& value) const;
     int getArrayLength() const;
 
 private:
@@ -118,7 +118,7 @@ void Array<T>::resize(int newLength)
 }
 
 template <typename T>
-void Array<T>::insertBefore(std::shared_ptr<T> value, int index)
+void Array<T>::insertBefore(const std::shared_ptr<T>& value, int index)
 {
     if (index < 0 || index > _length) throw bad_range();
 
@@ -159,19 +159,19 @@ void Array<T>::remove(int index)
     --_length;
 }
 template <typename T>
-void Array<T>::insertAtBeginning(std::shared_ptr<T> value)
+void Array<T>::insertAtBeginning(const std::shared_ptr<T>& value)
 {
     insertBefore(value, 0);
 }
 
 template <typename T>
-void Array<T>::insertAtEnd(std::shared_ptr<T> value)
+void Array<T>::insertAtEnd(const std::shared_ptr<T>& value)
 {
     insertBefore(value, _length);
 }
 
 template <typename T>
-int Array<T>::findValue(std::shared_ptr<T> value)
+int Array<T>::findValue(const std::shared_ptr<T>& value) const
 {
     for (int i{0}; i < _length; ++i)
     {
