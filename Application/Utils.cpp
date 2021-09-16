@@ -1,6 +1,5 @@
 #include <iostream>
 #include <conio.h>
-#include <limits>
 #include <iomanip>
 
 #include "Utils.h"
@@ -19,10 +18,10 @@ int Utils::getValue()
     while (true)
     {
         std::cin >> value;
-        if (std::cin.fail())  // Если были ошибки при вводе
+        if (std::cin.fail())  
         {
-            std::cin.clear();                                                    // очистка флагов ошибок ввода
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // очиска буфера ввода
+            std::cin.clear();                                                    
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
             std::cout << "Incorrect value entered!" << std::endl;
             std::cout << "Try again: ";
         }

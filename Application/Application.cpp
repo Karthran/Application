@@ -71,7 +71,7 @@ void Application::createAccount_inputName(std::string& user_name) const
         Utils::getBoundedString(user_name, MAX_INPUT_SIZE);
         std::cout << RESET;
         const std::string& (User::*get_name)() const = &User::getUserName;
-        if (checkingForStringExistence(user_name, get_name) != UNSUCCESSFUL)
+        if (user_name.empty() || checkingForStringExistence(user_name, get_name) != UNSUCCESSFUL)
         {
             std::cout << std::endl << RED << "Please change name!" << RESET << std::endl;
         }
@@ -93,7 +93,7 @@ void Application::createAccount_inputLogin(std::string& user_login) const
         Utils::getBoundedString(user_login, MAX_INPUT_SIZE);
         std::cout << RESET;
         const std::string& (User::*get_login)() const = &User::getUserLogin;
-        if (checkingForStringExistence(user_login, get_login) != UNSUCCESSFUL)
+        if (user_login.empty() || checkingForStringExistence(user_login, get_login) != UNSUCCESSFUL)
         {
             std::cout << std::endl << RED << "Please change login." << RESET;
         }
@@ -113,6 +113,8 @@ void Application::createAccount_inputPassword(std::string& user_password) const
         std::cout << BOLDGREEN;
         Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
         std::cout << RESET;
+
+        if (user_password.empty()) continue;
 
         std::cout << std::endl << "Re-enter your password: ";
         std::cout << BOLDGREEN;
@@ -360,7 +362,7 @@ int Application::privateChat(const std::shared_ptr<User>& source_user, const std
 {
     auto isContinue{true};
 
-    auto currentChat{_getPrivateChat(source_user, target_user)};
+    auto currentChat{getPrivateChat(source_user, target_user)};
 
     while (isContinue)
     {
@@ -408,7 +410,7 @@ void Application::privateChat_addMessage(
         }
         try
         {
-            _private_chat_array.insertBefore(chat, _findIndexForChat(chat));
+            _private_chat_array.insertBefore(chat, findIndexForChat(chat));
             ++_current_chat_number;
         }
         catch (std::exception& e)
@@ -453,25 +455,12 @@ void Application::privateChat_deleteMessage(
 
 int Application::findIndexForChat(const std::shared_ptr<Chat>& chat) const
 {
-    auto i{0};
-    for (; i < _current_chat_number; ++i)
-    {
-        if (chat->getFirstUser()->getUserID() > _private_chat_array[i]->getFirstUser()->getUserID()) continue;
-        if (chat->getFirstUser()->getUserID() < _private_chat_array[i]->getFirstUser()->getUserID()) return i;
-        if (chat->getSecondUser()->getUserID() > _private_chat_array[i]->getSecondUser()->getUserID()) continue;
-        return i;
-    }
-    return i;
-}
-
-int Application::_findIndexForChat(const std::shared_ptr<Chat>& chat) const
-{
     if (!_current_chat_number) return 0;
 
     long long first_userID{chat->getFirstUser()->getUserID()};
     long long second_userID{chat->getSecondUser()->getUserID()};
 
-    long long userID = (first_userID << 32) + second_userID;
+    long long userID{(first_userID << 32) + second_userID};  // Create value for search
 
     auto start{0};
     auto stop{_current_chat_number - 1};
@@ -488,40 +477,30 @@ int Application::_findIndexForChat(const std::shared_ptr<Chat>& chat) const
         long long first_userID{_private_chat_array[middle]->getFirstUser()->getUserID()};
         long long second_userID{_private_chat_array[middle]->getSecondUser()->getUserID()};
 
-        long long middleUserID = (first_userID << 32) + second_userID;
+        long long middleUserID{(first_userID << 32) + second_userID};// Сreate  value for comparison
 
-        sgn = Utils::sign(userID - middleUserID);
-        switch (sgn)
-        {
+        sgn = Utils::sign(userID - middleUserID);  // userID < middleUserID -> sng = -1
+        switch (sgn)                               // userID == middleUserID -> sng = 0
+        {                                          // userID > middleUserID -> sng =  1
             case -1: stop = middle - 1; break;
             case 1: start = middle + 1; break;
             default: break;
         }
         iteration_number /= 2;
     }
-
-    if (sgn == 1) return middle + 1;
+// Possible three variants
+//    [0][1]    [n]  [n+1]     [n][n+1]   
+//   | m            |  m            m  |
+//   ^              ^                  ^
+//   {   sgn = -1   }               sng =  1
+//   m - middle
+// ( sgn = -1)  When insertion goes to the beginning of an array or between elements
+// ( sgn =  1)  When insertion goes to the end of the array
+    if (sgn == 1) return middle + 1; //index correction 
     return middle;
 }
 
 const std::shared_ptr<Chat>& Application::getPrivateChat(
-    const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
-{
-    auto first_user{source_user->getUserID()};
-    auto second_user{target_user->getUserID()};
-
-    Utils::minToMaxOrder(first_user, second_user);
-
-    for (auto i{0}; i < _current_chat_number; ++i)
-    {
-        if (_private_chat_array[i]->getFirstUser()->getUserID() != first_user) continue;
-        if (_private_chat_array[i]->getSecondUser()->getUserID() != second_user) continue;
-        return _private_chat_array[i];
-    }
-    return nullptr;
-}
-
-const std::shared_ptr<Chat>& Application::_getPrivateChat(
     const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
 {
     long long first_userID{source_user->getUserID()};
@@ -529,7 +508,7 @@ const std::shared_ptr<Chat>& Application::_getPrivateChat(
 
     Utils::minToMaxOrder(first_userID, second_userID);
 
-    long long userID = (first_userID << 32) + second_userID;
+    long long userID{(first_userID << 32) + second_userID};  // Create value for search
 
     auto start{0};
     auto stop{_current_chat_number - 1};
@@ -545,11 +524,11 @@ const std::shared_ptr<Chat>& Application::_getPrivateChat(
         long long first_userID{_private_chat_array[middle]->getFirstUser()->getUserID()};
         long long second_userID{_private_chat_array[middle]->getSecondUser()->getUserID()};
 
-        long long middleUserID = (first_userID << 32) + second_userID;
+        long long middleUserID{(first_userID << 32) + second_userID};  // Сreate  value for comparison
 
-        sgn = Utils::sign(userID - middleUserID);
-
-        switch (sgn)
+        sgn = Utils::sign(userID - middleUserID);  // userID < middleUserID -> sng = -1
+                                                   // userID == middleUserID -> sng = 0
+        switch (sgn)                               // userID > middleUserID -> sng =  1
         {
             case -1: stop = middle - 1; break;
             case 0:

@@ -19,7 +19,7 @@ private:
     std::shared_ptr<Chat> _common_chat;
 
     Array<Chat> _private_chat_array;
-    int _current_chat_number{0};  // Common chat will be created in constructor
+    int _current_chat_number{0};  
 
     int createAccount();
     void createAccount_inputName(std::string& name) const;
@@ -47,12 +47,15 @@ private:
     void privateChat_editMessage(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, const std::shared_ptr<Chat>& chat) const;
     void privateChat_deleteMessage(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, const std::shared_ptr<Chat>& chat) const;
 
-    int findIndexForChat(const std::shared_ptr<Chat>& chat) const; /*Finds index in the _chat_array to insert new Chat*/
-    int _findIndexForChat(const std::shared_ptr<Chat>& chat) const; /*Finds index in the _chat_array to insert new Chat*/
+    /*Finds index in the _chat_array to insert before this index new Chat*/
+    int findIndexForChat(const std::shared_ptr<Chat>& chat) const; 
 
+    /*Finds chat in array, return empty shared_ptr if chat don't exist */
     const std::shared_ptr<Chat>& getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const;
-    const std::shared_ptr<Chat>& _getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const;
 
-    int checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const; /*Searches for matching line*/
-    int menu(std::string* string_arr, int size) const; /* string_arr{0] is Menu Name , printed with underline and without number*/
+    /*Searches for matching line*/
+    int checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const; 
+
+    /* string_arr{0] is Menu Name , printed with underline and without number*/ 
+    int menu(std::string* string_arr, int size) const;
 };

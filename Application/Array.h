@@ -29,7 +29,6 @@ public:
 private:
     int _length{0};
     std::shared_ptr<std::shared_ptr<T>[]> _data;
-    // T* _data{ nullptr };
 };
 
 template <typename T>
