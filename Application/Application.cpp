@@ -457,13 +457,60 @@ int Application::findIndexForChat(const std::shared_ptr<Chat>& chat) const
     for (; i < _current_chat_number; ++i)
     {
         if (chat->getFirstUser()->getUserID() > _chat_array[i]->getFirstUser()->getUserID()) continue;
+        if (chat->getFirstUser()->getUserID() < _chat_array[i]->getFirstUser()->getUserID()) return i;
         if (chat->getSecondUser()->getUserID() > _chat_array[i]->getSecondUser()->getUserID()) continue;
-        return i;  //
+        return i;
     }
     return i;
 }
 
-const std::shared_ptr<Chat>& Application::getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
+int Application::_findIndexForChat(const std::shared_ptr<Chat>& chat) const
+{
+    auto first_userID{chat->getFirstUser()->getUserID()};
+    auto second_userID{chat->getSecondUser()->getUserID()};
+
+    auto isContinue(true);
+    auto start{0};
+    auto stop{_current_chat_number - 1};
+    auto middle{0};
+
+    while (isContinue)
+    {
+        middle = (start + stop) / 2;
+        auto fu_sgn{sign(first_userID - _chat_array[middle]->getFirstUser()->getUserID())};
+        switch (fu_sgn)
+        {
+            case -1: stop = middle; break;
+            case 0:
+            {
+                auto su_sgn{sign(second_userID - _chat_array[middle]->getSecondUser()->getUserID())};
+                switch (su_sgn)
+                {
+                    case -1: stop = middle; break;
+                    case 0:
+                    {
+                        return middle;
+                    }
+                    break;
+                    case 1:
+                        if (second_userID < _chat_array[middle + 1]->getSecondUser()->getUserID()) return middle + 1;
+                        start = middle;
+                        break;
+                }
+            }
+            break;
+            case 1:
+                if (first_userID < _chat_array[middle + 1]->getFirstUser()->getUserID()) return middle + 1;
+                start = middle;
+                break;
+            default: break;
+        }
+    }
+    return 0;
+}
+
+const std::shared_ptr<Chat>& Application::getPrivateChat(
+    const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
 {
     auto first_user{source_user->getUserID()};
     auto second_user{target_user->getUserID()};
@@ -475,6 +522,47 @@ const std::shared_ptr<Chat>& Application::getPrivateChat(const std::shared_ptr<U
         if (_chat_array[i]->getFirstUser()->getUserID() != first_user) continue;
         if (_chat_array[i]->getSecondUser()->getUserID() != second_user) continue;
         return _chat_array[i];
+    }
+    return nullptr;
+}
+
+const std::shared_ptr<Chat>& Application::_getPrivateChat(
+    const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
+{
+    auto first_userID{source_user->getUserID()};
+    auto second_userID{target_user->getUserID()};
+    Utils::minToMaxOrder(first_userID, second_userID);
+
+    auto isContinue(true);
+    auto start{0};
+    auto stop{_current_chat_number - 1};
+    auto middle{0};
+
+    while (isContinue)
+    {
+        middle = (start + stop) / 2;
+        auto fu_sgn{sign(first_userID - _chat_array[middle]->getFirstUser()->getUserID())};
+        switch (fu_sgn)
+        {
+            case -1: stop = middle; break;
+            case 0:
+            {
+                auto su_sgn{sign(second_userID - _chat_array[middle]->getSecondUser()->getUserID())};
+                switch (su_sgn)
+                {
+                    case -1: stop = middle; break;
+                    case 0:
+                    {
+                        return _chat_array[middle];
+                    }
+                    break;
+                    case 1: start = middle; break;
+                }
+            }
+            break;
+            case 1: start = middle; break;
+            default: break;
+        }
     }
     return nullptr;
 }

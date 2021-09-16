@@ -84,3 +84,9 @@ bool Utils::minToMaxOrder(int& min, int& max)
     }
     return isSwap;
 }
+
+template <typename T>
+int sign(T val)
+{
+    return (T(0) < val) - (val < T(0));
+}

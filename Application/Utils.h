@@ -27,6 +27,10 @@
 #define MESSAGES_ON_PAGE 5
 #define LINE_TO_PAGE 15
 
+template <typename T>
+int sign(T val);
+
+
 class Utils
 {
 public:
