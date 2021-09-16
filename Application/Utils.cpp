@@ -74,19 +74,3 @@ void Utils::getString(std::string& string, int size)
     string = char_string;
 }
 
-bool Utils::minToMaxOrder(int& min, int& max)
-{
-    auto isSwap{false};
-    if (min > max)
-    {
-        std::swap(min, max);
-        isSwap = true;
-    }
-    return isSwap;
-}
-
-template <typename T>
-int sign(T val)
-{
-    return (T(0) < val) - (val < T(0));
-}

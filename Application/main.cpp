@@ -68,7 +68,7 @@ int main()
     int b = 5;
     int c = 10;
 
-    int a = sign(b - c);
+    int a = Utils::sign(b - c);
     switch (a)
     {
         case -1: std::cout << "-1" << std ::endl;

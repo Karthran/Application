@@ -13,10 +13,13 @@ public:
     void run();
 
 private:
-    int _current_user_number{0};
-    Array<Chat> _chat_array;
     Array<User> _user_array;
-    int _current_chat_number{1};  // Common chat will be created in constructor
+    int _current_user_number{0};
+
+    std::shared_ptr<Chat> _common_chat;
+
+    Array<Chat> _private_chat_array;
+    int _current_chat_number{0};  // Common chat will be created in constructor
 
     int createAccount();
     void createAccount_inputName(std::string& name) const;

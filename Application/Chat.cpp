@@ -9,12 +9,12 @@
 
 Chat::Chat()
 {
-    std::cout << "Chat constr " << this << std::endl;
+    /*std::cout << "Chat constr " << this << std::endl;*/
 }
 
 Chat::~Chat()
 {
-    std::cout << "Chat destr " << this << std::endl;
+   /* std::cout << "Chat destr " << this << std::endl;*/
 }
 
 void Chat::printMessages(int first_index, int number) const
