@@ -71,7 +71,9 @@ auto Chat::addMessage(const std::shared_ptr<User>& user) -> void
     tm timeinfo;
     localtime_s(&timeinfo, &seconds);
 
-    _message_array.insertBefore(std::make_shared<Message>(new_message,user,timeinfo), _current_message_num);
+    auto it = _message_array.end();
+
+    _message_array.insert(it, std::make_shared<Message>(new_message,user,timeinfo));
 
     ++_current_message_num;
 }
@@ -87,7 +89,8 @@ auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -
     if (!Utils::isOKSelect()) return;
     std::cout << RESET;
 
-    _message_array.remove(message_index);
+    auto it = _message_array.begin();
+    _message_array.erase(it + message_index);
 
     --_current_message_num;
 }

@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+
 #include "Array.h"
 
 class Message;
@@ -25,7 +27,7 @@ public:
     auto setSecondUser(const std::shared_ptr<User>& user) -> void { _second_user = user; }
 
 private:
-    Array<Message> _message_array{};
+    std::vector<std::shared_ptr<Message>> _message_array{};
     int _current_message_num{0};
 
     /* _first_user and _second_user used only Private Chat */
