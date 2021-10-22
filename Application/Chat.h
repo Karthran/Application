@@ -30,5 +30,5 @@ private:
 
     /* _first_user and _second_user used only Private Chat */
     std::shared_ptr<User> _first_user{nullptr}; /*In _first_user contains the minimum of the two user IDs  */
-    std::shared_ptr<User> _second_user{nullptr}; /*In _second_user contains the minimum of the two user IDs  */
+    std::shared_ptr<User> _second_user{nullptr}; /*In _second_user contains the maximum of the two user IDs  */
 };

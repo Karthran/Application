@@ -143,8 +143,6 @@
     <ClCompile Include="BadException.cpp" />
     <ClCompile Include="Chat.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Message.cpp" />
-    <ClCompile Include="User.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
