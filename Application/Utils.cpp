@@ -4,7 +4,7 @@
 
 #include "Utils.h"
 
-bool Utils::isOKSelect()
+auto Utils::isOKSelect() -> bool
 {
     char select;
     std::cin >> select;
@@ -12,7 +12,7 @@ bool Utils::isOKSelect()
     return true;
 }
 
-int Utils::getValue()
+auto Utils::inputIntegerValue() -> int
 {
     auto value{UNSUCCESSFUL};
     while (true)
@@ -33,7 +33,7 @@ int Utils::getValue()
     }
 }
 
-void Utils::printTimeAndData(const tm& timeinfo)
+auto Utils::printTimeAndData(const tm& timeinfo) -> void
 {
     std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_hour << ":";
     std::cout << std::setw(2) << std::setfill('0') << std::right << timeinfo.tm_min << ":";
@@ -44,7 +44,7 @@ void Utils::printTimeAndData(const tm& timeinfo)
     std::cout << timeinfo.tm_year + 1900 << std::endl;
 }
 
-void Utils::getBoundedString(std::string& string, int size, bool hidden)
+auto Utils::getBoundedString(std::string& string, int size, bool hidden) -> void
 {
     auto c{' '};
     auto i{0};
@@ -66,7 +66,7 @@ void Utils::getBoundedString(std::string& string, int size, bool hidden)
     }
 }
 
-void Utils::getString(std::string& string, int size)
+auto Utils::getString(std::string& string, int size) -> void
 {
     char char_string[MAX_INPUT_SIZE];
     std::cin.getline(char_string, size);

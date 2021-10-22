@@ -13,15 +13,15 @@ public:
 
     ~User() {/* std::cout << "User destr " << this << std::endl; */}
 
-    void setUserName(const std::string& name) { _user_name = name; }
-    void setUserLogin(const std::string& login) { _user_login = login; }
-    void setUserPassword(const std::string& password) { _user_password = password; }
-    void setUserID(int id) { _user_ID = id; }
+    auto setUserName(const std::string& name) -> void { _user_name = name; }
+    auto setUserLogin(const std::string& login) -> void { _user_login = login; }
+    auto setUserPassword(const std::string& password) -> void { _user_password = password; }
+    auto setUserID(int id) -> void { _user_ID = id; }
 
-    const std::string& getUserName() const { return _user_name; }
-    const std::string& getUserLogin() const { return _user_login; }
-    const std::string& getUserPassword() const { return _user_password; }
-    int getUserID() const { return _user_ID; }
+    auto getUserName() const -> const std::string& { return _user_name; }
+    auto getUserLogin() const -> const std::string& { return _user_login; }
+    auto getUserPassword() const -> const std::string& { return _user_password; }
+    auto getUserID() const -> int { return _user_ID; }
 
 private:
     std::string _user_name{};

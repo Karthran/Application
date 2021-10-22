@@ -1,6 +1,6 @@
 #include "Application.h"
 
-int main()
+auto main() -> int
 {
     setlocale(LC_ALL, "");
 

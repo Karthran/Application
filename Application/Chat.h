@@ -10,19 +10,19 @@ public:
     Chat();
     ~Chat();
 
-    void printMessages(int first_index, int number) const;
-    void printMessage(int message_index) const;
-    void addMessage(const std::shared_ptr<User>& user);
-    void deleteMessage(const std::shared_ptr<User>& user, int message_index);
-    void editMessage(const std::shared_ptr<User>& user, int message_index);
+    auto printMessages(int first_index, int number) const -> void;
+    auto printMessage(int message_index) const -> void;
+    auto addMessage(const std::shared_ptr<User>& user) -> void;
+    auto deleteMessage(const std::shared_ptr<User>& user, int message_index) -> void;
+    auto editMessage(const std::shared_ptr<User>& user, int message_index) -> void;
 
-    int getCurrentMessageNum() const { return _current_message_num; }
+    auto getCurrentMessageNum() const -> int { return _current_message_num; }
 
-    const std::shared_ptr<User>& getFirstUser() const { return _first_user; }
-    const std::shared_ptr<User>& getSecondUser() const { return _second_user; }
+    auto getFirstUser() const -> const std::shared_ptr<User>& { return _first_user; }
+    auto getSecondUser() const -> const std::shared_ptr<User>& { return _second_user; }
 
-    void setFirstUser(const std::shared_ptr<User>& user) { _first_user = user; }
-    void setSecondUser(const std::shared_ptr<User>& user) { _second_user = user; }
+    auto setFirstUser(const std::shared_ptr<User>& user) -> void { _first_user = user; }
+    auto setSecondUser(const std::shared_ptr<User>& user) -> void { _second_user = user; }
 
 private:
     Array<Message> _message_array{};

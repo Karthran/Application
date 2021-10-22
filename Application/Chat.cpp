@@ -17,7 +17,7 @@ Chat::~Chat()
    /* std::cout << "Chat destr " << this << std::endl;*/
 }
 
-void Chat::printMessages(int first_index, int number) const
+auto Chat::printMessages(int first_index, int number) const -> void
 {
 
     for (auto i{first_index}; i < number; ++i)
@@ -27,7 +27,7 @@ void Chat::printMessages(int first_index, int number) const
     }
 }
 
-void Chat::printMessage(int message_index) const
+auto Chat::printMessage(int message_index) const -> void
 {
 
     auto message{_message_array[message_index]};
@@ -56,7 +56,7 @@ void Chat::printMessage(int message_index) const
     std::cout << BOLDCYAN << std::setw(120) << std::setfill('-') << "-" << RESET << std::endl;
 }
 
-void Chat::addMessage(const std::shared_ptr<User>& user)
+auto Chat::addMessage(const std::shared_ptr<User>& user) -> void
 {
     std::string new_message{};
 
@@ -76,7 +76,7 @@ void Chat::addMessage(const std::shared_ptr<User>& user)
     ++_current_message_num;
 }
 
-void Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index)
+auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -> void
 {
 
     if (user != _message_array[message_index]->getUser()) return;
@@ -92,7 +92,7 @@ void Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index)
     --_current_message_num;
 }
 
-void Chat::editMessage(const std::shared_ptr<User>& user, int message_index)
+auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> void
 {
 
     if (user != _message_array[message_index]->getUser()) return;

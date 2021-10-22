@@ -1,50 +1,50 @@
 #pragma once
 #include <string>
 
-#define RESET "\033[0m"
-#define UNDER_LINE "\033[4m"
-#define BLACK "\033[30m"              /* Black */
-#define RED "\033[31m"                /* Red */
-#define GREEN "\033[32m"              /* Green */
-#define YELLOW "\033[33m"             /* Yellow */
-#define BLUE "\033[34m"               /* Blue */
-#define MAGENTA "\033[35m"            /* Magenta */
-#define CYAN "\033[36m"               /* Cyan */
-#define WHITE "\033[37m"              /* White */
-#define BOLDBLACK "\033[1m\033[30m"   /* Bold Black */
-#define BOLDRED "\033[1m\033[31m"     /* Bold Red */
-#define BOLDGREEN "\033[1m\033[32m"   /* Bold Green */
-#define BOLDYELLOW "\033[1m\033[33m"  /* Bold Yellow */
-#define BOLDBLUE "\033[1m\033[34m"    /* Bold Blue */
-#define BOLDMAGENTA "\033[1m\033[35m" /* Bold Magenta */
-#define BOLDCYAN "\033[1m\033[36m"    /* Bold Cyan */
-#define BOLDWHITE "\033[1m\033[37m"   /* Bold White */
+const std::string RESET = "\033[0m";
+const std::string UNDER_LINE = "\033[4m";
+const std::string BLACK = "\033[30m";              /* Black */
+const std::string RED = "\033[31m";                /* Red */
+const std::string GREEN = "\033[32m";              /* Green */
+const std::string YELLOW = "\033[33m";             /* Yellow */
+const std::string BLUE = "\033[34m";               /* Blue */
+const std::string MAGENTA = "\033[35m";            /* Magenta */
+const std::string CYAN = "\033[36m";               /* Cyan */
+const std::string WHITE = "\033[37m";              /* White */
+const std::string BOLDBLACK = "\033[1m\033[30m";   /* Bold Black */
+const std::string BOLDRED = "\033[1m\033[31m";     /* Bold Red */
+const std::string BOLDGREEN = "\033[1m\033[32m";   /* Bold Green */
+const std::string BOLDYELLOW = "\033[1m\033[33m";  /* Bold Yellow */
+const std::string BOLDBLUE = "\033[1m\033[34m";    /* Bold Blue */
+const std::string BOLDMAGENTA = "\033[1m\033[35m"; /* Bold Magenta */
+const std::string BOLDCYAN = "\033[1m\033[36m";    /* Bold Cyan */
+const std::string BOLDWHITE = "\033[1m\033[37m";   /* Bold White */
 
-#define MAX_INPUT_SIZE 30
-#define UNSUCCESSFUL -1
-#define SUCCESSFUL 1
-#define MAX_MESSAGES_IN_CHAT 10000
-#define MESSAGES_ON_PAGE 5
-#define LINE_TO_PAGE 15
+const int MAX_INPUT_SIZE = 30;
+const int UNSUCCESSFUL = -1;
+const int SUCCESSFUL  = 1;
+const int MAX_MESSAGES_IN_CHAT = 10000;
+const int MESSAGES_ON_PAGE = 5;
+const int LINE_TO_PAGE = 15;
 
 class Utils
 {
 public:
-    static bool isOKSelect();
-    static int getValue();
-    static void printTimeAndData(const tm& timeinfo);
-    static void getBoundedString(std::string& string, int size, bool hidden = false);
-    static void getString(std::string& string, int size);
-    
-    template <typename T>
-    static bool minToMaxOrder(T& min, T& max);
+    static auto isOKSelect() -> bool;
+    static auto inputIntegerValue() -> int;
+    static auto printTimeAndData(const tm& timeinfo) -> void;
+    static auto getBoundedString(std::string& string, int size, bool hidden = false) -> void;
+    static auto getString(std::string& string, int size) -> void;
 
     template <typename T>
-    static int sign(T val);
+    static auto minToMaxOrder(T& min, T& max) -> bool;
+
+    template <typename T>
+    static auto sign(T val) -> int;
 };
 
 template <typename T>
-bool Utils::minToMaxOrder(T& min, T& max)
+auto Utils::minToMaxOrder(T& min, T& max) -> bool
 {
     auto isSwap{false};
     if (min > max)
@@ -56,7 +56,7 @@ bool Utils::minToMaxOrder(T& min, T& max)
 }
 
 template <typename T>
-int Utils::sign(T val)
+auto Utils::sign(T val) -> int
 {
     return (T(0) < val) - (val < T(0));
 }

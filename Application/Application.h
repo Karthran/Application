@@ -21,41 +21,48 @@ private:
     Array<Chat> _private_chat_array;
     int _current_chat_number{0};  
 
-    int createAccount();
-    void createAccount_inputName(std::string& name) const;
-    void createAccount_inputLogin(std::string& login) const;
-    void createAccount_inputPassword(std::string& password) const;
+    auto createAccount() -> int;
+    auto createAccount_inputName(std::string& name) const -> void;
+    auto createAccount_inputLogin(std::string& login) const -> void;
+    auto createAccount_inputPassword(std::string& password) const -> void;
 
-    int signIn();
-    int signIn_inputLogin(std::string& user_login) const;
-    int signIn_inputPassword(std::string& user_password, int index) const;
+    auto signIn() -> int;
+    auto signIn_inputLogin(std::string& user_login) const -> int;
+    auto signIn_inputPassword(std::string& user_password, int index) const -> int;
 
-    int selectCommonOrPrivate(const std::shared_ptr<User>& user);
+    auto selectCommonOrPrivate(const std::shared_ptr<User>& user) -> int;
 
-    int commonChat(const std::shared_ptr<User>& user) const;
-    void commonChat_addMessage(const std::shared_ptr<User>& user) const;
-    void commonChat_editMessage(const std::shared_ptr<User>& user) const;
-    void commonChat_deleteMessage(const std::shared_ptr<User>& user) const;
+    auto commonChat(const std::shared_ptr<User>& user) const -> int;
+    auto commonChat_addMessage(const std::shared_ptr<User>& user) const -> void;
+    auto commonChat_editMessage(const std::shared_ptr<User>& user) const -> void;
+    auto commonChat_deleteMessage(const std::shared_ptr<User>& user) const -> void;
 
-    int privateMenu(const std::shared_ptr<User>& user);
-    void privateMenu_viewUsersNames() const;
-    int privateMenu_selectByName(const std::shared_ptr<User>& user) const;
-    void privateMenu_selectByID(const std::shared_ptr<User>& user);
+    auto privateMenu(const std::shared_ptr<User>& user) -> int;
+    auto privateMenu_viewUsersNames() const -> void;
+    auto privateMenu_selectByName(const std::shared_ptr<User>& user) const -> int;
+    auto privateMenu_selectByID(const std::shared_ptr<User>& user) -> void;
 
-    int privateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user);
-    void privateChat_addMessage(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, std::shared_ptr<Chat>& chat);
-    void privateChat_editMessage(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, const std::shared_ptr<Chat>& chat) const;
-    void privateChat_deleteMessage(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, const std::shared_ptr<Chat>& chat) const;
+    auto privateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) -> int;
+
+    auto privateChat_addMessage(
+        const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, std::shared_ptr<Chat>& chat) -> void;
+
+    auto privateChat_editMessage(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user,
+        const std::shared_ptr<Chat>& chat) const -> void;
+
+    auto privateChat_deleteMessage(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user,
+        const std::shared_ptr<Chat>& chat) const -> void;
 
     /*Finds index in the _chat_array to insert before this index new Chat*/
-    int findIndexForChat(const std::shared_ptr<Chat>& chat) const; 
+    auto findIndexForChat(const std::shared_ptr<Chat>& chat) const -> int; 
 
     /*Finds chat in array, return empty shared_ptr if chat don't exist */
-    const std::shared_ptr<Chat>& getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const;
+    auto  getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
+        -> const std::shared_ptr<Chat>&;
 
     /*Searches for matching line*/
-    int checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const; 
+    auto checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const -> int; 
 
     /* string_arr{0] is Menu Name , printed with underline and without number*/ 
-    int menu(std::string* string_arr, int size) const;
+    auto menu(std::string* string_arr, int size) const -> int;
 };

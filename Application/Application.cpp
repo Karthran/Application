@@ -13,7 +13,7 @@ Application::Application()
     _common_chat = std::make_shared<Chat>();
 }
 
-void Application::run()
+auto Application::run() -> void
 {
     std::cout << BOLDYELLOW << UNDER_LINE << "Wellcome to Console Chat!" << RESET << std::endl;
 
@@ -33,7 +33,7 @@ void Application::run()
     }
 }
 
-int Application::createAccount()
+auto Application::createAccount() -> int
 {
     std::string user_name{};
     createAccount_inputName(user_name);
@@ -59,7 +59,7 @@ int Application::createAccount()
     return UNSUCCESSFUL;
 }
 
-void Application::createAccount_inputName(std::string& user_name) const
+auto Application::createAccount_inputName(std::string& user_name) const -> void
 {
     std::cout << std::endl;
     std::cout << BOLDYELLOW << UNDER_LINE << "Create account:" << RESET << std::endl;
@@ -82,7 +82,7 @@ void Application::createAccount_inputName(std::string& user_name) const
     }
 }
 
-void Application::createAccount_inputLogin(std::string& user_login) const
+auto Application::createAccount_inputLogin(std::string& user_login) const -> void
 {
     auto isOK{false};
 
@@ -104,7 +104,7 @@ void Application::createAccount_inputLogin(std::string& user_login) const
     }
 }
 
-void Application::createAccount_inputPassword(std::string& user_password) const
+auto Application::createAccount_inputPassword(std::string& user_password) const -> void
 {
     auto isOK{false};
     while (!isOK)
@@ -133,7 +133,7 @@ void Application::createAccount_inputPassword(std::string& user_password) const
     }
 }
 
-int Application::signIn()
+auto Application::signIn() -> int
 {
     std::cout << std::endl;
     std::cout << BOLDYELLOW << UNDER_LINE << "Sign In:" << RESET << std::endl;
@@ -151,7 +151,7 @@ int Application::signIn()
     return index;
 }
 
-int Application::signIn_inputLogin(std::string& user_login) const
+auto Application::signIn_inputLogin(std::string& user_login) const -> int
 {
     auto index{UNSUCCESSFUL};
     auto isOK{false};
@@ -174,7 +174,7 @@ int Application::signIn_inputLogin(std::string& user_login) const
     return index;
 }
 
-int Application::signIn_inputPassword(std::string& user_password, int index) const
+auto Application::signIn_inputPassword(std::string& user_password, int index) const -> int
 {
     auto isOK{false};
     while (!isOK)
@@ -196,7 +196,7 @@ int Application::signIn_inputPassword(std::string& user_password, int index) con
     return SUCCESSFUL;
 }
 
-int Application::selectCommonOrPrivate(const std::shared_ptr<User>& user)
+auto Application::selectCommonOrPrivate(const std::shared_ptr<User>& user) -> int
 {
     auto isContinue{true};
     while (isContinue)
@@ -216,7 +216,7 @@ int Application::selectCommonOrPrivate(const std::shared_ptr<User>& user)
     return 0;
 }
 
-int Application::commonChat(const std::shared_ptr<User>& user) const
+auto Application::commonChat(const std::shared_ptr<User>& user) const -> int
 {
     auto isContinue{true};
     while (isContinue)
@@ -239,7 +239,7 @@ int Application::commonChat(const std::shared_ptr<User>& user) const
     return SUCCESSFUL;
 }
 
-void Application::commonChat_addMessage(const std::shared_ptr<User>& user) const
+auto Application::commonChat_addMessage(const std::shared_ptr<User>& user) const -> void
 {
     try
     {
@@ -251,10 +251,10 @@ void Application::commonChat_addMessage(const std::shared_ptr<User>& user) const
     }
 }
 
-void Application::commonChat_editMessage(const std::shared_ptr<User>& user) const
+auto Application::commonChat_editMessage(const std::shared_ptr<User>& user) const -> void
 {
     std::cout << std::endl << YELLOW << "Select message number for editing: " << BOLDGREEN;
-    int message_number{Utils::getValue()};
+    int message_number{Utils::inputIntegerValue()};
     std::cout << RESET;
     try
     {
@@ -266,10 +266,10 @@ void Application::commonChat_editMessage(const std::shared_ptr<User>& user) cons
     }
 }
 
-void Application::commonChat_deleteMessage(const std::shared_ptr<User>& user) const
+auto Application::commonChat_deleteMessage(const std::shared_ptr<User>& user) const -> void
 {
     std::cout << std::endl << YELLOW << "Select message number for deleting: " << BOLDGREEN;
-    int message_number{Utils::getValue()};
+    int message_number{Utils::inputIntegerValue()};
     std::cout << RESET;
     try
     {
@@ -281,7 +281,7 @@ void Application::commonChat_deleteMessage(const std::shared_ptr<User>& user) co
     }
 }
 
-int Application::privateMenu(const std::shared_ptr<User>& user)
+auto Application::privateMenu(const std::shared_ptr<User>& user) -> int
 {
     auto isContinue{true};
     while (isContinue)
@@ -306,7 +306,7 @@ int Application::privateMenu(const std::shared_ptr<User>& user)
     return 0;
 }
 
-void Application::privateMenu_viewUsersNames() const
+auto Application::privateMenu_viewUsersNames() const -> void
 {
     std::cout << std::endl;
     std::cout << BOLDGREEN << std::setw(5) << std::setfill(' ') << std::right << "ID"
@@ -321,7 +321,7 @@ void Application::privateMenu_viewUsersNames() const
     }
     std::cout << RESET;
 }
-int Application::privateMenu_selectByName(const std::shared_ptr<User>& user) const
+auto Application::privateMenu_selectByName(const std::shared_ptr<User>& user) const -> int
 {
     auto index{UNSUCCESSFUL};
     auto isOK{false};
@@ -343,10 +343,10 @@ int Application::privateMenu_selectByName(const std::shared_ptr<User>& user) con
     }
     return index;
 }
-void Application::privateMenu_selectByID(const std::shared_ptr<User>& user)
+auto Application::privateMenu_selectByID(const std::shared_ptr<User>& user) -> void
 {
     std::cout << std::endl << RESET << YELLOW << "Input target user ID: " << BOLDGREEN;
-    auto index{Utils::getValue()};
+    auto index{Utils::inputIntegerValue()};
     std::cout << RESET;
     try
     {
@@ -358,7 +358,7 @@ void Application::privateMenu_selectByID(const std::shared_ptr<User>& user)
     }
 }
 
-int Application::privateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user)
+auto Application::privateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) -> int
 {
     auto isContinue{true};
 
@@ -388,8 +388,8 @@ int Application::privateChat(const std::shared_ptr<User>& source_user, const std
     return 0;
 }
 
-void Application::privateChat_addMessage(
-    const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, std::shared_ptr<Chat>& chat)
+auto Application::privateChat_addMessage(
+    const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, std::shared_ptr<Chat>& chat) -> void
 {
     if (!chat)
     {
@@ -420,11 +420,11 @@ void Application::privateChat_addMessage(
     }
     chat->addMessage(source_user);
 }
-void Application::privateChat_editMessage(
-    const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, const std::shared_ptr<Chat>& chat) const
+auto Application::privateChat_editMessage(
+    const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, const std::shared_ptr<Chat>& chat) const -> void
 {
     std::cout << std::endl << RESET << YELLOW << "Select message number for editing: " << BOLDGREEN;
-    int message_number{Utils::getValue()};
+    int message_number{Utils::inputIntegerValue()};
     std::cout << RESET;
     if (chat) try
         {
@@ -436,11 +436,11 @@ void Application::privateChat_editMessage(
         }
 }
 
-void Application::privateChat_deleteMessage(
-    const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, const std::shared_ptr<Chat>& chat) const
+auto Application::privateChat_deleteMessage(
+    const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, const std::shared_ptr<Chat>& chat) const -> void
 {
     std::cout << std::endl << RESET << YELLOW << "Select message number for deleting: " << BOLDGREEN;
-    int message_number{Utils::getValue()};
+    int message_number{Utils::inputIntegerValue()};
     std::cout << RESET;
     if (chat) try
         {
@@ -453,7 +453,7 @@ void Application::privateChat_deleteMessage(
         }
 }
 
-int Application::findIndexForChat(const std::shared_ptr<Chat>& chat) const
+auto Application::findIndexForChat(const std::shared_ptr<Chat>& chat) const -> int
 {
     if (!_current_chat_number) return 0;
 
@@ -500,8 +500,8 @@ int Application::findIndexForChat(const std::shared_ptr<Chat>& chat) const
     return middle;
 }
 
-const std::shared_ptr<Chat>& Application::getPrivateChat(
-    const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
+auto Application::getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
+    -> const std::shared_ptr<Chat>&
 {
     long long first_userID{source_user->getUserID()};
     long long second_userID{target_user->getUserID()};
@@ -544,7 +544,7 @@ const std::shared_ptr<Chat>& Application::getPrivateChat(
     return nullptr;
 }
 
-int Application::checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const
+auto Application::checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const -> int
 {
     for (auto i{0}; i < _current_user_number; ++i)
     {
@@ -553,7 +553,7 @@ int Application::checkingForStringExistence(const std::string& string, const std
     return UNSUCCESSFUL;
 }
 
-int Application::menu(std::string* string_arr, int size) const
+auto Application::menu(std::string* string_arr, int size) const -> int
 {
     if (size <= 0) return UNSUCCESSFUL;
 
@@ -565,7 +565,7 @@ int Application::menu(std::string* string_arr, int size) const
         std::cout << BOLDGREEN << i << "." << RESET << string_arr[i] << std::endl;
     }
     std::cout << YELLOW << "Your choice?: " << BOLDGREEN;
-    int menu_item{Utils::getValue()};
+    int menu_item{Utils::inputIntegerValue()};
     std::cout << RESET;
 
     return menu_item;
