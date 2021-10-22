@@ -1,8 +1,6 @@
 #pragma once
 #include <vector>
 
-#include "Array.h"
-
 class Message;
 class User;
 

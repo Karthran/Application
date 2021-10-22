@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <vector>
+
 #include "Array.h"
 
 class Chat;
@@ -13,7 +15,7 @@ public:
     void run();
 
 private:
-    Array<User> _user_array;
+    std::vector<std::shared_ptr<User>> _user_array;
     int _current_user_number{0};
 
     std::shared_ptr<Chat> _common_chat;

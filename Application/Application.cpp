@@ -49,7 +49,7 @@ auto Application::createAccount() -> int
 
     try
     {
-        _user_array.insertBefore(std::make_shared<User>(user_name, user_login, user_password, _current_user_number), _current_user_number);
+        _user_array.push_back(std::make_shared<User>(user_name, user_login, user_password, _current_user_number));
         return ++_current_user_number;
     }
     catch (std::exception& e)

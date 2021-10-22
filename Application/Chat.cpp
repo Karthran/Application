@@ -71,9 +71,7 @@ auto Chat::addMessage(const std::shared_ptr<User>& user) -> void
     tm timeinfo;
     localtime_s(&timeinfo, &seconds);
 
-    auto it = _message_array.end();
-
-    _message_array.insert(it, std::make_shared<Message>(new_message,user,timeinfo));
+    _message_array.push_back(std::make_shared<Message>(new_message,user,timeinfo));
 
     ++_current_message_num;
 }
