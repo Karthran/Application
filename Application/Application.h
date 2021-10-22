@@ -1,8 +1,7 @@
 #pragma once
 #include <string>
+#include <memory>
 #include <vector>
-
-#include "Array.h"
 
 class Chat;
 class User;
@@ -20,7 +19,7 @@ private:
 
     std::shared_ptr<Chat> _common_chat;
 
-    Array<Chat> _private_chat_array;
+    std::vector<std::shared_ptr<Chat>> _private_chat_array;
     int _current_chat_number{0};  
 
     auto createAccount() -> int;

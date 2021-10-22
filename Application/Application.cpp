@@ -317,7 +317,11 @@ auto Application::privateMenu_viewUsersNames() const -> void
         std::cout << BOLDGREEN << std::setw(5) << std::setfill(' ') << std::right << i + 1 << "." << BOLDYELLOW << std::setw(MAX_INPUT_SIZE)
                   << std::setfill(' ') << std::left << _user_array[i]->getUserName()
                   << std::endl;                         // array's indices begin from 0, Output indices begin from 1
-        if (!((i + 1) % LINE_TO_PAGE)) std::cin.get();  //  Suspend via LINE_TO_PAGE lines
+        if (!((i + 1) % LINE_TO_PAGE))
+        {
+            std::cout << std::endl << RESET << YELLOW << "Press Enter for continue." ;
+            std::cin.get();  //  Suspend via LINE_TO_PAGE lines
+        }
     }
     std::cout << RESET;
 }
@@ -410,7 +414,8 @@ auto Application::privateChat_addMessage(
         }
         try
         {
-            _private_chat_array.insertBefore(chat, findIndexForChat(chat));
+            auto it = _private_chat_array.begin();
+            _private_chat_array.insert(it + findIndexForChat(chat), chat);
             ++_current_chat_number;
         }
         catch (std::exception& e)
