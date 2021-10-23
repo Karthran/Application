@@ -25,7 +25,7 @@ auto Chat::printMessages(int first_index, int number) const -> void
         printMessage(i);
         if (!((i + 1) % MESSAGES_ON_PAGE))
         {
-            std::cout << std::endl << RESET << YELLOW << "Press Enter for continue.";
+            std::cout << std::endl << RESET << YELLOW << "Press Enter for continue...";
             std::cin.get();  // Suspend via MESSAGES_ON_PAGE messages
         }
     }

@@ -2,7 +2,7 @@
 #include <string>
 #include <memory>
 #include <vector>
-
+#include <map>
 class Chat;
 class User;
 
@@ -19,7 +19,7 @@ private:
 
     std::shared_ptr<Chat> _common_chat;
 
-    std::vector<std::shared_ptr<Chat>> _private_chat_array;
+    std::map<long long, std::shared_ptr<Chat>> _private_chat_array;
     int _current_chat_number{0};  
 
     auto createAccount() -> int;
@@ -53,9 +53,6 @@ private:
 
     auto privateChat_deleteMessage(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user,
         const std::shared_ptr<Chat>& chat) const -> void;
-
-    /*Finds index in the _chat_array to insert before this index new Chat*/
-    auto findIndexForChat(const std::shared_ptr<Chat>& chat) const -> int; 
 
     /*Finds chat in array, return empty shared_ptr if chat don't exist */
     auto  getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
