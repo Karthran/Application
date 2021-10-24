@@ -7,7 +7,6 @@
 #include "Chat.h"
 #include "Utils.h"
 #include "User.h"
-#include "BadException.h"
 #include "SHA1.h"
 
 Application::Application()

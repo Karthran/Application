@@ -140,7 +140,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="BadException.cpp" />
     <ClCompile Include="Chat.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SHA1.cpp" />
@@ -148,8 +147,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Array.h" />
-    <ClInclude Include="BadException.h" />
     <ClInclude Include="Chat.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="resource.h" />

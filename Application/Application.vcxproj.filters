@@ -27,9 +27,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="BadException.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="SHA1.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -51,12 +48,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Array.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="BadException.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="SHA1.h">
