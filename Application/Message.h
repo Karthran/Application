@@ -7,13 +7,13 @@ class User;
 class Message
 {
 public:
-    Message() { /*std::cout << "Message constr " << this << std::endl;*/ };
+    Message() { std::cout << "Message constr " << this << std::endl; };
     Message(const std::string& message, const std::shared_ptr<User>& user, const tm& message_creation_time)
         : _message(message), _user(user), _message_creation_time(message_creation_time)
     {
-        /*std::cout << "Message constr " << this << std::endl;*/ 
+        std::cout << "Message constr " << this << std::endl; 
     }
-    ~Message() { /*std::cout << "Message destr " << this << std::endl; */}
+    ~Message() { std::cout << "Message destr " << this << std::endl; }
     auto setMessage(const std::string& message) -> void { _message = message; }
     auto setUser(const std::shared_ptr<User>& user) -> void { _user = user; }
     auto setMessageCreationTime(const tm& time) -> void { _message_creation_time = time; }

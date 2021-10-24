@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <unordered_map>
 class Chat;
 class User;
 
@@ -22,6 +23,8 @@ private:
     std::map<long long, std::shared_ptr<Chat>> _private_chat_array;
     int _current_chat_number{0};  
 
+    std::unordered_map<std::string, std::shared_ptr<unsigned int[]>> _password_hash; 
+
     auto createAccount() -> int;
     auto createAccount_inputName(std::string& name) const -> void;
     auto createAccount_inputLogin(std::string& login) const -> void;
@@ -29,7 +32,7 @@ private:
 
     auto signIn() -> int;
     auto signIn_inputLogin(std::string& user_login) const -> int;
-    auto signIn_inputPassword(std::string& user_password, int index) const -> int;
+    auto signIn_inputPassword(std::string& user_password) const -> void;
 
     auto selectCommonOrPrivate(const std::shared_ptr<User>& user) -> int;
 

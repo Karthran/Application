@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ctime>
 #include <iomanip>
+#include <exception>
 
 #include "Chat.h"
 #include "Message.h"
@@ -9,12 +10,12 @@
 
 Chat::Chat()
 {
-    /*std::cout << "Chat constr " << this << std::endl;*/
+    std::cout << "Chat constr " << this << std::endl;
 }
 
 Chat::~Chat()
 {
-    /* std::cout << "Chat destr " << this << std::endl;*/
+    std::cout << "Chat destr " << this << std::endl;
 }
 
 auto Chat::printMessages(int first_index, int number) const -> void
@@ -62,61 +63,80 @@ auto Chat::printMessage(int message_index) const -> void
 
 auto Chat::addMessage(const std::shared_ptr<User>& user) -> void
 {
-    std::string new_message{};
+    try
+    {
+        std::string new_message{};
 
-    std::cout << std::endl << YELLOW << "Input message: " << BOLDGREEN;
-    std::getline(std::cin, new_message);
-    std::cout << RESET;
-    std::cout << BOLDYELLOW << "Send message?(Y/N):" << BOLDGREEN;
-    if (!Utils::isOKSelect()) return;
-    std::cout << RESET;
+        std::cout << std::endl << YELLOW << "Input message: " << BOLDGREEN;
+        std::getline(std::cin, new_message);
+        std::cout << RESET;
+        std::cout << BOLDYELLOW << "Send message?(Y/N):" << BOLDGREEN;
+        if (!Utils::isOKSelect()) return;
+        std::cout << RESET;
 
-    time_t seconds{time(NULL)};
-    tm timeinfo;
-    localtime_s(&timeinfo, &seconds);
+        time_t seconds{time(NULL)};
+        tm timeinfo;
+        localtime_s(&timeinfo, &seconds);
 
-    _message_array.push_back(std::make_shared<Message>(new_message, user, timeinfo));
+        _message_array.push_back(std::make_shared<Message>(new_message, user, timeinfo));
 
-    ++_current_message_num;
+        ++_current_message_num;
+    }
+    catch (std::exception& e)
+    {
+        std::cout << BOLDRED << "Exception: " << e.what() << RESET << std::endl;
+    }
 }
 
 auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -> void
 {
+    try
+    {
+        if (user != _message_array.at(message_index)->getUser()) return;
 
-    if (user != _message_array[message_index]->getUser()) return;
+        printMessage(message_index);
 
-    printMessage(message_index);
+        std::cout << BOLDYELLOW << "Delete message?(Y/N):" << BOLDGREEN;
+        if (!Utils::isOKSelect()) return;
+        std::cout << RESET;
 
-    std::cout << BOLDYELLOW << "Delete message?(Y/N):" << BOLDGREEN;
-    if (!Utils::isOKSelect()) return;
-    std::cout << RESET;
+        auto it = _message_array.begin();
+        _message_array.erase(it + message_index);
 
-    auto it = _message_array.begin();
-    _message_array.erase(it + message_index);
-
-    --_current_message_num;
+        --_current_message_num;
+    }
+    catch (std::exception& e)
+    {
+        std::cout << BOLDRED << "Exception: " << e.what() << RESET << std::endl;
+    }
 }
 
 auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> void
 {
+    try
+    {
+        if (user != _message_array.at(message_index)->getUser()) return;
 
-    if (user != _message_array[message_index]->getUser()) return;
+        printMessage(message_index);
 
-    printMessage(message_index);
+        std::string new_message{};
 
-    std::string new_message{};
+        std::cout << YELLOW << "Input new message: " << BOLDGREEN;
+        std::getline(std::cin, new_message);
+        std::cout << RESET;
 
-    std::cout << YELLOW << "Input new message: " << BOLDGREEN;
-    std::getline(std::cin, new_message);
-    std::cout << RESET;
+        std::cout << BOLDYELLOW << "Save changes?(Y/N):" << BOLDGREEN;
+        if (!Utils::isOKSelect()) return;
+        std::cout << RESET;
 
-    std::cout << BOLDYELLOW << "Save changes?(Y/N):" << BOLDGREEN;
-    if (!Utils::isOKSelect()) return;
-    std::cout << RESET;
+        time_t seconds{time(NULL)};
+        tm timeinfo;
+        localtime_s(&timeinfo, &seconds);
 
-    time_t seconds{time(NULL)};
-    tm timeinfo;
-    localtime_s(&timeinfo, &seconds);
-
-    _message_array[message_index]->editedMessage(new_message, timeinfo);
+        _message_array[message_index]->editedMessage(new_message, timeinfo);
+    }
+    catch (std::exception& e)
+    {
+        std::cout << BOLDRED << "Exception: " << e.what() << RESET << std::endl;
+    }
 }

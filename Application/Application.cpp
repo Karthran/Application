@@ -1,12 +1,14 @@
 ﻿#include <iostream>
 #include <cassert>
 #include <iomanip>
+#include <exception>
 
 #include "Application.h"
 #include "Chat.h"
 #include "Utils.h"
 #include "User.h"
 #include "BadException.h"
+#include "SHA1.h"
 
 Application::Application()
 {
@@ -47,16 +49,12 @@ auto Application::createAccount() -> int
     std::cout << BOLDYELLOW << std::endl << "Create account?(Y/N): " << BOLDGREEN;
     if (!Utils::isOKSelect()) return UNSUCCESSFUL;
 
-    try
-    {
-        _user_array.push_back(std::make_shared<User>(user_name, user_login, user_password, _current_user_number));
-        return ++_current_user_number;
-    }
-    catch (std::exception& e)
-    {
-        std::cout << BOLDRED << e.what() << RESET << std::endl;
-    }
-    return UNSUCCESSFUL;
+    _user_array.push_back(std::make_shared<User>(user_name, user_login, _current_user_number));
+
+    std::shared_ptr<uint[]> hash = sha1(user_password);
+    _password_hash[user_login] = hash;
+
+    return ++_current_user_number;
 }
 
 auto Application::createAccount_inputName(std::string& user_name) const -> void
@@ -139,61 +137,52 @@ auto Application::signIn() -> int
     std::cout << BOLDYELLOW << UNDER_LINE << "Sign In:" << RESET << std::endl;
 
     std::string user_login{};
-    auto index{signIn_inputLogin(user_login)};
-
-    if (index == UNSUCCESSFUL) return UNSUCCESSFUL;
-
     std::string user_password{};
-    if (signIn_inputPassword(user_password, index) == UNSUCCESSFUL) return UNSUCCESSFUL;
+    while (true)
+    {
+        auto index{signIn_inputLogin(user_login)};
 
-    selectCommonOrPrivate(_user_array[index]);
+        signIn_inputPassword(user_password);
 
-    return index;
+        if (index != UNSUCCESSFUL)
+        {
+            auto it = _password_hash.find(user_login);
+            std::shared_ptr<uint[]> hash = sha1(user_password);
+            auto password_match{true};
+            for (auto i{0}; i < SHA1HASHLENGTHUINTS; ++i)
+            {
+                if (it->second[i] == hash[i]) continue;
+                password_match = false;
+                break;
+            }
+            if (password_match)
+            {
+                selectCommonOrPrivate(_user_array[index]);
+                return index;
+            }
+        }
+
+        std::cout << std::endl << RED << "Login or Password don't match!" << std::endl;
+        std::cout << BOLDYELLOW << std::endl << "Try again?(Y/N):" << BOLDGREEN;
+        if (!Utils::isOKSelect()) return UNSUCCESSFUL;
+    }
 }
 
 auto Application::signIn_inputLogin(std::string& user_login) const -> int
 {
-    auto index{UNSUCCESSFUL};
-    auto isOK{false};
-    while (!isOK)
-    {
-        std::cout << RESET << "Login:";
-        std::cout << BOLDGREEN;
-        std::cin >> user_login;
-        std::cout << RESET;
-        const std::string& (User::*get_login)() const = &User::getUserLogin;
-        if ((index = checkingForStringExistence(user_login, get_login)) == UNSUCCESSFUL)
-        {
-            std::cout << RED << "Login don't exist!" << std::endl;
-            std::cout << BOLDYELLOW << std::endl << "Try again?(Y/N):" << BOLDGREEN;
-            if (!Utils::isOKSelect()) return UNSUCCESSFUL;
-            continue;
-        }
-        isOK = true;
-    }
-    return index;
+    std::cout << RESET << "Login:";
+    std::cout << BOLDGREEN;
+    std::cin >> user_login;
+    std::cout << RESET;
+    const std::string& (User::*get_login)() const = &User::getUserLogin;
+    return checkingForStringExistence(user_login, get_login);
 }
-
-auto Application::signIn_inputPassword(std::string& user_password, int index) const -> int
+auto Application::signIn_inputPassword(std::string& user_password) const -> void
 {
-    auto isOK{false};
-    while (!isOK)
-    {
-        std::cout << RESET << "Password:";
-        std::cout << BOLDGREEN;
-        Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
-        std::cout << RESET;
-        if (_user_array[index]->getUserPassword() != user_password)
-        {
-            std::cout << std::endl << RED << "Password don't match!" << std::endl;
-            std::cout << BOLDYELLOW << std::endl << "Try again?(Y/N):" << BOLDGREEN;
-            if (!Utils::isOKSelect()) return UNSUCCESSFUL;
-            continue;
-        }
-        std::cout << std::endl;
-        isOK = true;
-    }
-    return SUCCESSFUL;
+    std::cout << RESET << "Password:";
+    std::cout << BOLDGREEN;
+    Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
+    std::cout << RESET;
 }
 
 auto Application::selectCommonOrPrivate(const std::shared_ptr<User>& user) -> int
@@ -241,14 +230,7 @@ auto Application::commonChat(const std::shared_ptr<User>& user) const -> int
 
 auto Application::commonChat_addMessage(const std::shared_ptr<User>& user) const -> void
 {
-    try
-    {
-        _common_chat->addMessage(user);
-    }
-    catch (std::exception& e)
-    {
-        std::cout << BOLDRED << e.what() << RESET << std::endl;
-    }
+    _common_chat->addMessage(user);
 }
 
 auto Application::commonChat_editMessage(const std::shared_ptr<User>& user) const -> void
@@ -256,14 +238,7 @@ auto Application::commonChat_editMessage(const std::shared_ptr<User>& user) cons
     std::cout << std::endl << YELLOW << "Select message number for editing: " << BOLDGREEN;
     int message_number{Utils::inputIntegerValue()};
     std::cout << RESET;
-    try
-    {
-        _common_chat->editMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
-    }
-    catch (std::exception& e)
-    {
-        std::cout << BOLDRED << e.what() << RESET << std::endl;
-    }
+    _common_chat->editMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
 }
 
 auto Application::commonChat_deleteMessage(const std::shared_ptr<User>& user) const -> void
@@ -271,14 +246,7 @@ auto Application::commonChat_deleteMessage(const std::shared_ptr<User>& user) co
     std::cout << std::endl << YELLOW << "Select message number for deleting: " << BOLDGREEN;
     int message_number{Utils::inputIntegerValue()};
     std::cout << RESET;
-    try
-    {
-        _common_chat->deleteMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
-    }
-    catch (std::exception& e)
-    {
-        std::cout << BOLDRED << e.what() << RESET << std::endl;
-    }
+    _common_chat->deleteMessage(user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
 }
 
 auto Application::privateMenu(const std::shared_ptr<User>& user) -> int
@@ -354,11 +322,11 @@ auto Application::privateMenu_selectByID(const std::shared_ptr<User>& user) -> v
     std::cout << RESET;
     try
     {
-        privateChat(user, _user_array[index - 1]);  // array's indices begin from 0, Output indices begin from 1
+        privateChat(user, _user_array.at(index - 1));  // array's indices begin from 0, Output indices begin from 1
     }
     catch (std::exception& e)
     {
-        std::cout << BOLDRED << e.what() << RESET << std::endl;
+        std::cout << BOLDRED << "Exception: " << e.what() << RESET << std::endl;
     }
 }
 
@@ -414,15 +382,8 @@ auto Application::privateChat_addMessage(
             chat->setFirstUser(source_user);
             chat->setSecondUser(target_user);
         }
-        try
-        {
-            _private_chat_array[mapKey] = chat;
-            ++_current_chat_number;
-        }
-        catch (std::exception& e)
-        {
-            std::cout << BOLDRED << e.what() << RESET << std::endl;
-        }
+        _private_chat_array[mapKey] = chat;
+        ++_current_chat_number;
     }
     chat->addMessage(source_user);
 }
@@ -432,14 +393,10 @@ auto Application::privateChat_editMessage(
     std::cout << std::endl << RESET << YELLOW << "Select message number for editing: " << BOLDGREEN;
     int message_number{Utils::inputIntegerValue()};
     std::cout << RESET;
-    if (chat) try
-        {
-            chat->editMessage(source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
-        }
-        catch (std::exception& e)
-        {
-            std::cout << BOLDRED << e.what() << RESET << std::endl;
-        }
+    if (chat)
+    {
+        chat->editMessage(source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+    }
 }
 
 auto Application::privateChat_deleteMessage(
@@ -448,15 +405,11 @@ auto Application::privateChat_deleteMessage(
     std::cout << std::endl << RESET << YELLOW << "Select message number for deleting: " << BOLDGREEN;
     int message_number{Utils::inputIntegerValue()};
     std::cout << RESET;
-    if (chat) try
-        {
+    if (chat)
+    {
 
-            chat->deleteMessage(source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
-        }
-        catch (std::exception& e)
-        {
-            std::cout << BOLDRED << e.what() << RESET << std::endl;
-        }
+        chat->deleteMessage(source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+    }
 }
 
 auto Application::getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
