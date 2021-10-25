@@ -4,8 +4,10 @@
 #include <vector>
 #include <map>
 #include <unordered_map>
+
 class Chat;
 class User;
+class PasswordHash;
 
 class Application
 {
@@ -23,7 +25,7 @@ private:
     std::map<long long, std::shared_ptr<Chat>> _private_chat_array;
     int _current_chat_number{0};  
 
-    std::unordered_map<std::string, std::shared_ptr<unsigned int[]>> _password_hash; 
+    std::unordered_map<std::string, std::shared_ptr<PasswordHash>> _password_hash; 
 
     auto createAccount() -> int;
     auto createAccount_inputName(std::string& name) const -> void;
@@ -66,4 +68,7 @@ private:
 
     /* string_arr{0] is Menu Name , printed with underline and without number*/ 
     auto menu(std::string* string_arr, int size) const -> int;
+
+    auto save() -> void;
+    auto load() -> void;
 };

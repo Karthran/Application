@@ -1,8 +1,10 @@
 #pragma once
 #include <vector>
+#include <fstream>
 
 class Message;
 class User;
+class File;
 
 class Chat
 {
@@ -16,7 +18,7 @@ public:
     auto deleteMessage(const std::shared_ptr<User>& user, int message_index) -> void;
     auto editMessage(const std::shared_ptr<User>& user, int message_index) -> void;
 
-    auto getCurrentMessageNum() const -> int { return _current_message_num; }
+    auto getCurrentMessageNum() const -> int { return static_cast<int>(_message_array.size()); }
 
     auto getFirstUser() const -> const std::shared_ptr<User>& { return _first_user; }
     auto getSecondUser() const -> const std::shared_ptr<User>& { return _second_user; }
@@ -24,11 +26,14 @@ public:
     auto setFirstUser(const std::shared_ptr<User>& user) -> void { _first_user = user; }
     auto setSecondUser(const std::shared_ptr<User>& user) -> void { _second_user = user; }
 
+    auto save(File& file) -> void;
+    auto load(File& file, const std::vector<std::shared_ptr<User>>& user) -> void;
+
 private:
     std::vector<std::shared_ptr<Message>> _message_array{};
-    int _current_message_num{0};
+    // int _current_message_num{0};
 
     /* _first_user and _second_user used only Private Chat */
-    std::shared_ptr<User> _first_user{nullptr}; /*In _first_user contains the minimum of the two user IDs  */
+    std::shared_ptr<User> _first_user{nullptr};  /*In _first_user contains the minimum of the two user IDs  */
     std::shared_ptr<User> _second_user{nullptr}; /*In _second_user contains the maximum of the two user IDs  */
 };

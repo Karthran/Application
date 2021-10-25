@@ -2,11 +2,13 @@
 #include <ctime>
 #include <iomanip>
 #include <exception>
+#include <map>
 
 #include "Chat.h"
 #include "Message.h"
 #include "User.h"
 #include "Utils.h"
+#include "FileUtils.h"
 
 Chat::Chat()
 {
@@ -80,7 +82,7 @@ auto Chat::addMessage(const std::shared_ptr<User>& user) -> void
 
         _message_array.push_back(std::make_shared<Message>(new_message, user, timeinfo));
 
-        ++_current_message_num;
+//        ++_current_message_num;
     }
     catch (std::exception& e)
     {
@@ -103,7 +105,7 @@ auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -
         auto it = _message_array.begin();
         _message_array.erase(it + message_index);
 
-        --_current_message_num;
+ //       --_current_message_num;
     }
     catch (std::exception& e)
     {
@@ -138,5 +140,62 @@ auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> 
     catch (std::exception& e)
     {
         std::cout << BOLDRED << "Exception: " << e.what() << RESET << std::endl;
+    }
+}
+
+auto Chat::save(File& file) -> void
+{
+    int first_userID{-1};
+    if (_first_user) first_userID = _first_user.get()->getUserID(); 
+    file.write(first_userID);
+
+    int second_userID{-1};
+    if (_first_user) second_userID = _second_user.get()->getUserID();
+    file.write(second_userID);
+
+    auto message_number{_message_array.size()};
+
+    file.write(message_number);
+
+    for (auto i{0u}; i < message_number; ++i)
+    {
+        file.write(_message_array[i]->getMessage());
+        file.write(_message_array[i]->getUser()->getUserID());
+        file.write(_message_array[i]->getMessageCreationTime());
+        auto flag = _message_array[i]->isEdited() ? 1 : 0;
+        file.write(flag);
+        if (flag) file.write(_message_array[i]->getMessageEditingTime());
+    }
+
+}
+
+auto Chat::load(File& file, const std::vector < std::shared_ptr<User>>& user) -> void
+{
+    size_t message_number{0};
+    file.read(message_number);
+    for (auto i{0u}; i < message_number; ++i)
+    {
+        std::string message{};
+        file.read(message);
+
+        auto userID{0};
+        file.read(userID);
+
+        tm creation_time{};
+        file.read(creation_time);
+
+        _message_array.push_back(std::make_shared<Message>(message, user[userID], creation_time));
+
+        int flag_edit{0};
+        file.read(flag_edit);
+
+        if (!flag_edit) continue;
+
+        _message_array[i]->setEdited(true);
+
+        tm edited_time{};
+        file.read(edited_time);
+
+        _message_array[i]->setMessageEditingTime(edited_time);
     }
 }

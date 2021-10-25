@@ -1,7 +1,9 @@
 #include <string.h>
 #include <memory>
-
+#include <cstdlib>
+#include <ctime>
 #include "SHA1.h"
+#include "PasswordHash.h"
 
 auto cycle_shift_left(uint val, int bit_count) -> uint
 {
@@ -13,9 +15,11 @@ auto bring_to_human_view(uint val)->uint
     return ((val & 0x000000FF) << 24) | ((val & 0x0000FF00) << 8) | ((val & 0x00FF0000) >> 8) | ((val & 0xFF000000) >> 24);
 }
 
-auto sha1(const std::string& message) -> std::shared_ptr<uint[]>
+auto sha1(const std::string& message, const std::string& salt) -> std::shared_ptr<PasswordHash>
 {
-    auto msize_bytes{message.size()};
+    std::string password_salt = message + salt;
+
+    uint msize_bytes{static_cast<uint>(password_salt.size())};
 
     //инициализаци€
     uint A = H[0];
@@ -45,7 +49,7 @@ auto sha1(const std::string& message) -> std::shared_ptr<uint[]>
 
     // выдел€ем новый буфер и копируем в него исходный
     unsigned char* newMessage = new unsigned char[extendedMessageSize];
-    memcpy(newMessage, message.c_str(), msize_bytes);
+    memcpy(newMessage, password_salt.c_str(), msize_bytes);
 
     // первый бит ставим '1', остальные обнул€ем
     newMessage[msize_bytes] = 0x80;
@@ -127,14 +131,30 @@ auto sha1(const std::string& message) -> std::shared_ptr<uint[]>
     }
 
     // A,B,C,D,E €вл€ютс€ выходными 32-х битными составл€ющими посчитанного хэша
-    std::shared_ptr<uint[]> digest(new uint[SHA1HASHLENGTHUINTS], std::default_delete<uint[]>());
-    digest[0] = A;
-    digest[1] = B;
-    digest[2] = C;
-    digest[3] = D;
-    digest[4] = E;
+    std::shared_ptr<PasswordHash> ph = std::make_shared<PasswordHash>();
+    Hash hash; 
+    hash._A = A;
+    hash._B = B;
+    hash._C = C;
+    hash._D = D;
+    hash._E = E;
+
+    ph->setHash(hash);
+    ph->setSalt(salt);
 
     // чистим за собой
     delete[] newMessage;
-    return digest;
+    return ph;
+}
+
+auto getSalt() -> const std::string
+{
+    std::string salt{};
+    srand(static_cast<uint>(time(0)));
+    auto SaltArrayLength{sizeof(alphanum) - 1}; // -1 for last '\0'
+    for (auto i{0}; i < SALTLENGTH; ++i)
+    {
+        salt.push_back(alphanum[rand() % SaltArrayLength]);
+    }
+    return salt;
 }

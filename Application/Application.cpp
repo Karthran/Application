@@ -2,12 +2,15 @@
 #include <cassert>
 #include <iomanip>
 #include <exception>
+#include <fstream>
 
 #include "Application.h"
 #include "Chat.h"
 #include "Utils.h"
 #include "User.h"
 #include "SHA1.h"
+#include "PasswordHash.h"
+#include "FileUtils.h"
 
 Application::Application()
 {
@@ -17,6 +20,8 @@ Application::Application()
 auto Application::run() -> void
 {
     std::cout << BOLDYELLOW << UNDER_LINE << "Wellcome to Console Chat!" << RESET << std::endl;
+
+    load();
 
     auto isContinue{true};
     while (isContinue)
@@ -32,6 +37,8 @@ auto Application::run() -> void
             default: isContinue = false; break;
         }
     }
+
+    save();
 }
 
 auto Application::createAccount() -> int
@@ -50,8 +57,9 @@ auto Application::createAccount() -> int
 
     _user_array.push_back(std::make_shared<User>(user_name, user_login, _current_user_number));
 
-    std::shared_ptr<uint[]> hash = sha1(user_password);
-    _password_hash[user_login] = hash;
+    const std::string salt = getSalt();
+    std::shared_ptr<PasswordHash> password_hash = sha1(user_password, salt);
+    _password_hash[user_login] = password_hash;
 
     return ++_current_user_number;
 }
@@ -146,11 +154,11 @@ auto Application::signIn() -> int
         if (index != UNSUCCESSFUL)
         {
             auto it = _password_hash.find(user_login);
-            std::shared_ptr<uint[]> hash = sha1(user_password);
+            std::shared_ptr<PasswordHash> password_hash = sha1(user_password, it->second->getSalt());
             auto password_match{true};
             for (auto i{0}; i < SHA1HASHLENGTHUINTS; ++i)
             {
-                if (it->second[i] == hash[i]) continue;
+                if (it->second->getHash() == password_hash->getHash()) continue;
                 password_match = false;
                 break;
             }
@@ -181,7 +189,7 @@ auto Application::signIn_inputPassword(std::string& user_password) const -> void
     std::cout << RESET << "Password:";
     std::cout << BOLDGREEN;
     Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
-    std::cout << RESET;
+    std::cout << RESET << std::endl;
 }
 
 auto Application::selectCommonOrPrivate(const std::shared_ptr<User>& user) -> int
@@ -369,7 +377,7 @@ auto Application::privateChat_addMessage(
         long long second_userID{target_user->getUserID()};
         auto isSwap(Utils::minToMaxOrder(first_userID, second_userID));
 
-        long long mapKey{(first_userID << 32) + second_userID};  // Create value for key value
+        long long mapKey{static_cast<long long>(first_userID) + second_userID};  // Create value for key value
 
         if (isSwap)
         {
@@ -419,7 +427,7 @@ auto Application::getPrivateChat(const std::shared_ptr<User>& source_user, const
 
     Utils::minToMaxOrder(first_userID, second_userID);
 
-    long long searchID{(first_userID << 32) + second_userID};  // Create value for search
+    long long searchID{static_cast<long long>(first_userID) + second_userID};  // Create value for search
 
     auto it = _private_chat_array.begin();
 
@@ -456,4 +464,116 @@ auto Application::menu(std::string* string_arr, int size) const -> int
     std::cout << RESET;
 
     return menu_item;
+}
+
+auto Application::save() -> void
+{
+    // Save vector<User>
+    File file_user("User.txt", std::fstream::out);
+    if (file_user.getError()) return;
+
+    file_user.write(_user_array.size());
+
+    for (auto i{0}; i < _user_array.size(); ++i)
+    {
+        file_user.write(_user_array[i]->getUserName());
+        file_user.write(_user_array[i]->getUserLogin());
+        file_user.write(_user_array[i]->getUserID());
+    }
+
+    // Save _password_hash
+    File file_hash("UserHash.txt", std::fstream::out);
+    for (auto i{0}; i < _user_array.size(); ++i)
+    {
+        file_hash.write(_password_hash[_user_array[i]->getUserLogin()]->getSalt());
+        Hash hash = _password_hash[_user_array[i]->getUserLogin()]->getHash();
+        file_hash.write(hash._A);
+        file_hash.write(hash._B);
+        file_hash.write(hash._C);
+        file_hash.write(hash._D);
+        file_hash.write(hash._E);
+    }
+
+    // Save Chats (Common and Privats)
+    File file_chat("Chat.txt", std::fstream::out);
+
+    _common_chat->save(file_chat);
+
+    file_chat.write(_private_chat_array.size());
+
+    for (auto ch : _private_chat_array)
+    {
+        ch.second->save(file_chat);
+    }
+}
+
+auto Application::load() -> void
+{
+    // Load vector<User>
+    File file_user("User.txt", std::fstream::in);
+
+    if (file_user.getError()) return;
+
+    size_t user_count{0};
+    file_user.read(user_count);
+    _current_user_number = static_cast<int>(user_count);
+
+    for (auto i{0}; i < _current_user_number; ++i)
+    {
+        std::string name{};
+        file_user.read(name);  
+        std::string login{};
+        file_user.read(login);  
+        int userID{-1};
+        file_user.read(userID);  
+
+        std::shared_ptr<User> user = std::make_shared<User>(name, login, userID);
+
+        _user_array.push_back(user);
+    }
+
+    // Load Password Hash
+    File file_hash("UserHash.txt", std::fstream::in);
+    for (auto i{0}; i < _user_array.size(); ++i)
+    {
+        std::string salt{};
+        file_hash.read(salt);
+        Hash hash;
+        file_hash.read(hash._A);
+        file_hash.read(hash._B);
+        file_hash.read(hash._C);
+        file_hash.read(hash._D);
+        file_hash.read(hash._E);
+        _password_hash[_user_array[i]->getUserLogin()] = std::make_shared<PasswordHash>(hash, salt);
+    }
+
+    // Load Chats (Common and Privats)
+    File file_chat("Chat.txt", std::fstream::in);
+
+    int user1{0}, user2{0};
+    file_chat.read(user1);
+    file_chat.read(user2);
+    if (user1 > 0 || user2 > 0) return; // Chat.txt begin from -1 -1 (Common chat don't have users) 
+
+    _common_chat.get()->load(file_chat, _user_array);
+
+    size_t private_chats_number{0};
+    file_chat.read(private_chats_number);
+
+    for (auto i{0}; i < private_chats_number; ++i)
+    {
+        int first_userID{0}, second_userID{0};
+        file_chat.read(first_userID);
+        file_chat.read(second_userID);
+
+        long long keyID{(static_cast<long long>(first_userID) << 32) + second_userID};
+
+        _private_chat_array[keyID] = std::make_shared<Chat>();
+
+        _private_chat_array[keyID]->setFirstUser(_user_array[first_userID]);
+        _private_chat_array[keyID]->setSecondUser(_user_array[second_userID]);
+
+        _private_chat_array[keyID]->load(file_chat, _user_array);
+    }
+
 }
