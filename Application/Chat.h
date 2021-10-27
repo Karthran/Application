@@ -14,9 +14,9 @@ public:
 
     auto printMessages(int first_index, int number) const -> void;
     auto printMessage(int message_index) const -> void;
-    auto addMessage(const std::shared_ptr<User>& user) -> void;
-    auto deleteMessage(const std::shared_ptr<User>& user, int message_index) -> void;
-    auto editMessage(const std::shared_ptr<User>& user, int message_index) -> void;
+    auto addMessage(const std::shared_ptr<User>& user) -> const std::shared_ptr<Message>&;
+    auto deleteMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>&;
+    auto editMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>&;
 
     auto getCurrentMessageNum() const -> int { return static_cast<int>(_message_array.size()); }
 
@@ -25,6 +25,8 @@ public:
 
     auto setFirstUser(const std::shared_ptr<User>& user) -> void { _first_user = user; }
     auto setSecondUser(const std::shared_ptr<User>& user) -> void { _second_user = user; }
+
+    auto getMessageIndex(const std::shared_ptr<Message>& message) -> int;
 
     auto save(File& file) -> void;
     auto load(File& file, const std::vector<std::shared_ptr<User>>& user) -> void;

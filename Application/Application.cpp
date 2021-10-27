@@ -11,6 +11,7 @@
 #include "SHA1.h"
 #include "PasswordHash.h"
 #include "FileUtils.h"
+#include "NewMessages.h"
 
 Application::Application()
 {
@@ -56,6 +57,8 @@ auto Application::createAccount() -> int
     if (!Utils::isOKSelect()) return UNSUCCESSFUL;
 
     _user_array.push_back(std::make_shared<User>(user_name, user_login, _current_user_number));
+
+    _new_messages_array.push_back(std::make_shared<NewMessages>());
 
     const std::string salt = getSalt();
     std::shared_ptr<PasswordHash> password_hash = sha1(user_password, salt);
@@ -392,7 +395,9 @@ auto Application::privateChat_addMessage(
         _private_chat_array[mapKey] = chat;
         ++_current_chat_number;
     }
-    chat->addMessage(source_user);
+    auto message{chat->addMessage(source_user)};
+    auto index{target_user->getUserID()};
+    _new_messages_array[index]->addNewMessage(message);
 }
 auto Application::privateChat_editMessage(
     const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, const std::shared_ptr<Chat>& chat) const -> void
@@ -402,7 +407,9 @@ auto Application::privateChat_editMessage(
     std::cout << RESET;
     if (chat)
     {
-        chat->editMessage(source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+        auto message{chat->editMessage(source_user, message_number - 1)};  // array's indices begin from 0, Output indices begin from 1
+        auto index{target_user->getUserID()};
+        _new_messages_array[index]->addNewMessage(message);
     }
 }
 
@@ -414,8 +421,11 @@ auto Application::privateChat_deleteMessage(
     std::cout << RESET;
     if (chat)
     {
+        auto message{chat->deleteMessage(source_user, message_number - 1)};  // array's indices begin from 0, Output indices begin from 1
 
-        chat->deleteMessage(source_user, message_number - 1);  // array's indices begin from 0, Output indices begin from 1
+        auto index{target_user->getUserID()};
+
+        _new_messages_array[index]->removeNewMessage(message);
     }
 }
 
@@ -468,6 +478,17 @@ auto Application::menu(std::string* string_arr, int size) const -> int
 
 auto Application::save() -> void
 {
+    saveUserArray();
+
+    savePasswordHash();
+
+    saveChats();
+
+    saveNewMessages();
+}
+
+auto Application::saveUserArray() const -> void
+{
     // Save vector<User>
     File file_user("User.txt", std::fstream::out);
     if (file_user.getError()) return;
@@ -480,7 +501,10 @@ auto Application::save() -> void
         file_user.write(_user_array[i]->getUserLogin());
         file_user.write(_user_array[i]->getUserID());
     }
+}
 
+auto Application::savePasswordHash() -> void
+{
     // Save _password_hash
     File file_hash("UserHash.txt", std::fstream::out);
     for (auto i{0}; i < _user_array.size(); ++i)
@@ -493,7 +517,10 @@ auto Application::save() -> void
         file_hash.write(hash._D);
         file_hash.write(hash._E);
     }
+}
 
+auto Application::saveChats() const -> void
+{
     // Save Chats (Common and Privats)
     File file_chat("Chat.txt", std::fstream::out);
 
@@ -507,9 +534,50 @@ auto Application::save() -> void
     }
 }
 
+auto Application::saveNewMessages() -> void 
+{
+    // Save New Messages (Common and Privats)
+    File file_newmsg("NewMessages.txt", std::fstream::out);
+
+    auto target_users_number{_new_messages_array.size()};
+    file_newmsg.write(target_users_number);
+
+    for (auto i{0u}; i < target_users_number; ++i)
+    {
+        auto newMessage{_new_messages_array[i]};
+        auto source_users_number{newMessage->usersNumber()};
+        if (!source_users_number) continue; // if  user has no new messages
+        file_newmsg.write(i); // save userID
+        file_newmsg.write(source_users_number);
+
+        for (auto j{0u}; j < source_users_number; ++j)
+        {
+            long long first_userID{i};
+            long long second_userID{j};
+            Utils::minToMaxOrder(first_userID, second_userID);
+            long long mapKey{static_cast<long long>(first_userID) + second_userID};  // Create value for key value
+            auto message{newMessage->getMessages(j)};
+            for (auto k{0}; k < newMessage->newMessageNumber(j); ++k)
+            {
+                file_newmsg.write(_private_chat_array[mapKey]->getMessageIndex(message[k]));
+            }
+        }
+
+    }
+}
+
 auto Application::load() -> void
 {
-    // Load vector<User>
+    loadUserArray();
+
+    loadPasswordHash();
+
+    loadChats();
+}
+
+// Load vector<User>
+auto Application::loadUserArray() -> void
+{
     File file_user("User.txt", std::fstream::in);
 
     if (file_user.getError()) return;
@@ -521,18 +589,23 @@ auto Application::load() -> void
     for (auto i{0}; i < _current_user_number; ++i)
     {
         std::string name{};
-        file_user.read(name);  
+        file_user.read(name);
         std::string login{};
-        file_user.read(login);  
+        file_user.read(login);
         int userID{-1};
-        file_user.read(userID);  
+        file_user.read(userID);
 
         std::shared_ptr<User> user = std::make_shared<User>(name, login, userID);
 
         _user_array.push_back(user);
-    }
 
-    // Load Password Hash
+        _new_messages_array.push_back(std::make_shared<NewMessages>()); // TODO need loading!!!
+    }
+}
+
+// Load Password Hash
+auto Application::loadPasswordHash() -> void
+{
     File file_hash("UserHash.txt", std::fstream::in);
     for (auto i{0}; i < _user_array.size(); ++i)
     {
@@ -546,14 +619,17 @@ auto Application::load() -> void
         file_hash.read(hash._E);
         _password_hash[_user_array[i]->getUserLogin()] = std::make_shared<PasswordHash>(hash, salt);
     }
+}
 
-    // Load Chats (Common and Privats)
+// Load Chats (Common and Privats)
+auto Application::loadChats() -> void
+{
     File file_chat("Chat.txt", std::fstream::in);
 
     int user1{0}, user2{0};
     file_chat.read(user1);
     file_chat.read(user2);
-    if (user1 > 0 || user2 > 0) return; // Chat.txt begin from -1 -1 (Common chat don't have users) 
+    if (user1 > 0 || user2 > 0) return;  // Chat.txt begin from -1 -1 (Common chat don't have users)
 
     _common_chat.get()->load(file_chat, _user_array);
 
@@ -575,5 +651,4 @@ auto Application::load() -> void
 
         _private_chat_array[keyID]->load(file_chat, _user_array);
     }
-
 }

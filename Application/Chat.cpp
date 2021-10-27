@@ -63,7 +63,7 @@ auto Chat::printMessage(int message_index) const -> void
     std::cout << BOLDCYAN << std::setw(120) << std::setfill('-') << "-" << RESET << std::endl;
 }
 
-auto Chat::addMessage(const std::shared_ptr<User>& user) -> void
+auto Chat::addMessage(const std::shared_ptr<User>& user) -> const std::shared_ptr<Message>&
 {
     try
     {
@@ -73,7 +73,7 @@ auto Chat::addMessage(const std::shared_ptr<User>& user) -> void
         std::getline(std::cin, new_message);
         std::cout << RESET;
         std::cout << BOLDYELLOW << "Send message?(Y/N):" << BOLDGREEN;
-        if (!Utils::isOKSelect()) return;
+        if (!Utils::isOKSelect()) return nullptr;
         std::cout << RESET;
 
         time_t seconds{time(NULL)};
@@ -81,43 +81,45 @@ auto Chat::addMessage(const std::shared_ptr<User>& user) -> void
         localtime_s(&timeinfo, &seconds);
 
         _message_array.push_back(std::make_shared<Message>(new_message, user, timeinfo));
-
-//        ++_current_message_num;
+        return _message_array[_message_array.size() - 1];
     }
     catch (std::exception& e)
     {
         std::cout << BOLDRED << "Exception: " << e.what() << RESET << std::endl;
     }
+    return nullptr;
 }
 
-auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -> void
+auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>&
 {
     try
     {
-        if (user != _message_array.at(message_index)->getUser()) return;
+        if (user != _message_array.at(message_index)->getUser()) return nullptr;
 
         printMessage(message_index);
 
         std::cout << BOLDYELLOW << "Delete message?(Y/N):" << BOLDGREEN;
-        if (!Utils::isOKSelect()) return;
+        if (!Utils::isOKSelect()) return nullptr;
         std::cout << RESET;
 
         auto it = _message_array.begin();
+        auto message {_message_array[message_index]};
         _message_array.erase(it + message_index);
 
- //       --_current_message_num;
+        return message;
     }
     catch (std::exception& e)
     {
         std::cout << BOLDRED << "Exception: " << e.what() << RESET << std::endl;
     }
+    return nullptr;
 }
 
-auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> void
+auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>&
 {
     try
     {
-        if (user != _message_array.at(message_index)->getUser()) return;
+        if (user != _message_array.at(message_index)->getUser()) return nullptr;
 
         printMessage(message_index);
 
@@ -128,7 +130,7 @@ auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> 
         std::cout << RESET;
 
         std::cout << BOLDYELLOW << "Save changes?(Y/N):" << BOLDGREEN;
-        if (!Utils::isOKSelect()) return;
+        if (!Utils::isOKSelect()) return nullptr;
         std::cout << RESET;
 
         time_t seconds{time(NULL)};
@@ -136,17 +138,29 @@ auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> 
         localtime_s(&timeinfo, &seconds);
 
         _message_array[message_index]->editedMessage(new_message, timeinfo);
+
+        return _message_array[message_index];
     }
     catch (std::exception& e)
     {
         std::cout << BOLDRED << "Exception: " << e.what() << RESET << std::endl;
     }
+    return nullptr;
+}
+
+auto Chat::getMessageIndex(const std::shared_ptr<Message>& message) -> int
+{
+    for (auto i{0u}; i < _message_array.size(); ++i)
+    {
+        if (_message_array[i].get() == message.get()) return i;
+    }
+    return -1; // bad index
 }
 
 auto Chat::save(File& file) -> void
 {
     int first_userID{-1};
-    if (_first_user) first_userID = _first_user.get()->getUserID(); 
+    if (_first_user) first_userID = _first_user.get()->getUserID();
     file.write(first_userID);
 
     int second_userID{-1};
@@ -166,10 +180,9 @@ auto Chat::save(File& file) -> void
         file.write(flag);
         if (flag) file.write(_message_array[i]->getMessageEditingTime());
     }
-
 }
 
-auto Chat::load(File& file, const std::vector < std::shared_ptr<User>>& user) -> void
+auto Chat::load(File& file, const std::vector<std::shared_ptr<User>>& user) -> void
 {
     size_t message_number{0};
     file.read(message_number);

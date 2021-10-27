@@ -8,6 +8,7 @@
 class Chat;
 class User;
 class PasswordHash;
+class NewMessages;
 
 class Application
 {
@@ -23,9 +24,11 @@ private:
     std::shared_ptr<Chat> _common_chat;
 
     std::map<long long, std::shared_ptr<Chat>> _private_chat_array;
-    int _current_chat_number{0};  
+    int _current_chat_number{0};
 
-    std::unordered_map<std::string, std::shared_ptr<PasswordHash>> _password_hash; 
+    std::unordered_map<std::string, std::shared_ptr<PasswordHash>> _password_hash;
+
+    std::vector<std::shared_ptr<NewMessages>> _new_messages_array;
 
     auto createAccount() -> int;
     auto createAccount_inputName(std::string& name) const -> void;
@@ -60,15 +63,24 @@ private:
         const std::shared_ptr<Chat>& chat) const -> void;
 
     /*Finds chat in array, return empty shared_ptr if chat don't exist */
-    auto  getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
+    auto getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
         -> const std::shared_ptr<Chat>&;
 
     /*Searches for matching line*/
-    auto checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const -> int; 
+    auto checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const -> int;
 
-    /* string_arr{0] is Menu Name , printed with underline and without number*/ 
+    /* string_arr{0] is Menu Name , printed with underline and without number*/
     auto menu(std::string* string_arr, int size) const -> int;
 
     auto save() -> void;
+    auto saveUserArray() const -> void;
+    auto savePasswordHash() -> void;
+    auto saveChats() const -> void;
+    auto saveNewMessages() -> void;
+
     auto load() -> void;
+    auto loadUserArray() -> void;
+    auto loadPasswordHash() -> void;
+    auto loadChats() -> void;
+    auto loadNewMessages() -> void;
 };
