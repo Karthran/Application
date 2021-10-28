@@ -76,7 +76,7 @@ auto Application::createAccount_inputName(std::string& user_name) const -> void
     {
         std::cout << "Name(max " << MAX_INPUT_SIZE << " letters): ";
         std::cout << BOLDGREEN;
-        Utils::getBoundedString(user_name, MAX_INPUT_SIZE);
+        Utils::getString(user_name, MAX_INPUT_SIZE);
         std::cout << RESET;
         const std::string& (User::*get_name)() const = &User::getUserName;
         if (user_name.empty() || checkingForStringExistence(user_name, get_name) != UNSUCCESSFUL)
@@ -98,7 +98,7 @@ auto Application::createAccount_inputLogin(std::string& user_login) const -> voi
     {
         std::cout << std::endl << "Login(max " << MAX_INPUT_SIZE << " letters): ";
         std::cout << BOLDGREEN;
-        Utils::getBoundedString(user_login, MAX_INPUT_SIZE);
+        Utils::getString(user_login, MAX_INPUT_SIZE);
         std::cout << RESET;
         const std::string& (User::*get_login)() const = &User::getUserLogin;
         if (user_login.empty() || checkingForStringExistence(user_login, get_login) != UNSUCCESSFUL)
@@ -119,7 +119,7 @@ auto Application::createAccount_inputPassword(std::string& user_password) const 
     {
         std::cout << std::endl << "Password(max " << MAX_INPUT_SIZE << " letters): ";
         std::cout << BOLDGREEN;
-        Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
+        Utils::getString(user_password, MAX_INPUT_SIZE);
         std::cout << RESET;
 
         if (user_password.empty()) continue;
@@ -128,7 +128,7 @@ auto Application::createAccount_inputPassword(std::string& user_password) const 
         std::cout << BOLDGREEN;
 
         std::string check_user_password;
-        Utils::getBoundedString(check_user_password, MAX_INPUT_SIZE, true);
+        Utils::getString(check_user_password, MAX_INPUT_SIZE);
         std::cout << RESET;
         if (user_password != check_user_password)
         {
@@ -191,7 +191,7 @@ auto Application::signIn_inputPassword(std::string& user_password) const -> void
 {
     std::cout << RESET << "Password:";
     std::cout << BOLDGREEN;
-    Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
+    Utils::getString(user_password, MAX_INPUT_SIZE);
     std::cout << RESET << std::endl;
 }
 

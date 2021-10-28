@@ -12,12 +12,12 @@
 
 Chat::Chat()
 {
-    std::cout << "Chat constr " << this << std::endl;
+   /* std::cout << "Chat constr " << this << std::endl;*/
 }
 
 Chat::~Chat()
 {
-    std::cout << "Chat destr " << this << std::endl;
+   /* std::cout << "Chat destr " << this << std::endl;*/
 }
 
 auto Chat::printMessages(int first_index, int number) const -> void
@@ -78,7 +78,7 @@ auto Chat::addMessage(const std::shared_ptr<User>& user) -> const std::shared_pt
 
         time_t seconds{time(NULL)};
         tm timeinfo;
-        localtime_s(&timeinfo, &seconds);
+        localtime_r(&seconds, &timeinfo);
 
         _message_array.push_back(std::make_shared<Message>(new_message, user, timeinfo));
         return _message_array[_message_array.size() - 1];
@@ -135,7 +135,7 @@ auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> 
 
         time_t seconds{time(NULL)};
         tm timeinfo;
-        localtime_s(&timeinfo, &seconds);
+        localtime_r(&seconds, &timeinfo);
 
         _message_array[message_index]->editedMessage(new_message, timeinfo);
 

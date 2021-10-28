@@ -1,1 +1,1 @@
-4 aaa aaa 0 bbb bbb 1 ccc ccc 2 ddd ddd 3 
+2 aaa aaa 0 bbb bbb 1 

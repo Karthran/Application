@@ -1,5 +1,4 @@
 #include <iostream>
-#include <conio.h>
 #include <iomanip>
 
 #include "Utils.h"
@@ -21,13 +20,13 @@ auto Utils::inputIntegerValue() -> int
         if (std::cin.fail())  
         {
             std::cin.clear();                                                    
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+            std::cin.ignore(MAX_INT, '\n'); 
             std::cout << "Incorrect value entered!" << std::endl;
             std::cout << "Try again: ";
         }
         else
         {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cin.ignore(MAX_INT, '\n');
             return value;
         }
     }
@@ -44,32 +43,8 @@ auto Utils::printTimeAndData(const tm& timeinfo) -> void
     std::cout << timeinfo.tm_year + 1900 << std::endl;
 }
 
-auto Utils::getBoundedString(std::string& string, int size, bool hidden) -> void
-{
-    auto c{' '};
-    auto i{0};
-    string.erase();
-    while ((c = _getch()) != '\r')
-    {
-        string.push_back(c);
-        if (hidden)
-            _putch('*');
-        else
-            _putch(c);
-        if (++i == size)
-        {
-            while (_getch() != '\r')
-            {
-            }
-            break;
-        }
-    }
-}
-
 auto Utils::getString(std::string& string, int size) -> void
 {
-    char char_string[MAX_INPUT_SIZE];
-    std::cin.getline(char_string, size);
-    string = char_string;
+    std::cin >> string;
 }
 

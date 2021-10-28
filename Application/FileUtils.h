@@ -6,7 +6,7 @@
 class File
 {
 public:
-    File(const std::string& file_name, std::fstream::_Openmode flags = std::fstream::out)
+    File(const std::string& file_name, std::ios_base::openmode flags = std::fstream::out)
     {
         _fs.open(file_name, flags);
         if (_fs.is_open()) _error = false;

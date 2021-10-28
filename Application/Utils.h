@@ -26,6 +26,7 @@ const int SUCCESSFUL  = 1;
 const int MAX_MESSAGES_IN_CHAT = 10000;
 const int MESSAGES_ON_PAGE = 5;
 const int LINE_TO_PAGE = 15;
+const int MAX_INT = 0xffffffff;
 
 class Utils
 {
@@ -33,7 +34,6 @@ public:
     static auto isOKSelect() -> bool;
     static auto inputIntegerValue() -> int;
     static auto printTimeAndData(const tm& timeinfo) -> void;
-    static auto getBoundedString(std::string& string, int size, bool hidden = false) -> void;
     static auto getString(std::string& string, int size) -> void;
 
     template <typename T>

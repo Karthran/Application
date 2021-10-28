@@ -85,13 +85,4 @@ inline auto NewMessages::isUserIDExists(int userID) const -> int
 inline auto NewMessages::setLastVisitTime(const tm& tm) -> void
 {
     _lastVisitTime = tm;
-    //_lastVisitTime.tm_sec = tm.tm_sec;
-    //_lastVisitTime.tm_min = tm.tm_min;
-    //_lastVisitTime.tm_hour = tm.tm_hour;
-    //_lastVisitTime.tm_mday = tm.tm_mday;
-    //_lastVisitTime.tm_mon = tm.tm_mon;
-    //_lastVisitTime.tm_year = tm.tm_year;
-    //_lastVisitTime.tm_wday = tm.tm_wday;
-    //_lastVisitTime.tm_yday = tm.tm_yday;
-    //_lastVisitTime.tm_isdst = tm.tm_isdst;
 }

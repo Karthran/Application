@@ -22,9 +22,9 @@ struct Hash
 class PasswordHash
 {
 public:
-    PasswordHash() { std::cout << "PasswordHash constr " << this << std::endl; }
-    PasswordHash(Hash hash, std::string salt) : _hash(hash), _salt(salt) { std::cout << "PasswordHash constr " << this << std::endl; }
-    ~PasswordHash() { std::cout << "PasswordHash destr " << this << std::endl; }
+    PasswordHash() { /*std::cout << "PasswordHash constr " << this << std::endl;*/ }
+    PasswordHash(Hash hash, std::string salt) : _hash(hash), _salt(salt) {/* std::cout << "PasswordHash constr " << this << std::endl;*/ }
+    ~PasswordHash() { /*std::cout << "PasswordHash destr " << this << std::endl; */}
     auto setSalt(const std::string& salt) -> void { _salt = salt; }
     auto setHash(const Hash& hash) -> void { _hash = hash; }
 
