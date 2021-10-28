@@ -9,8 +9,8 @@ const int BAD_INDEX = -1;
 class NewMessages
 {
 public:
-    NewMessages() { std::cout << "NewMessages constr " << this << std::endl; }
-    ~NewMessages() { std::cout << "NewMessages destr " << this << std::endl; }
+    NewMessages() { /*std::cout << "NewMessages constr " << this << std::endl;*/ }
+    ~NewMessages() { /*std::cout << "NewMessages destr " << this << std::endl;*/ }
 
     auto isNewMessagesExists() const -> bool { return isNewMsgExists; }
     auto addNewMessage(const std::shared_ptr<Message>& message) -> void;
