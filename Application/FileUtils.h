@@ -30,6 +30,8 @@ public:
 
     auto getError() const -> bool { return _error; }
 
+    auto getStream() -> std::fstream& { return _fs; }
+
 private:
     std::fstream _fs;
     bool _error{true};

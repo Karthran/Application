@@ -6,13 +6,13 @@
 auto NewMessages::addNewMessage(const std::shared_ptr<Message>& message) -> void
 {
     auto userID{message->getUser()->getUserID()};
-    auto it = _userIDmap.begin();
-    for (; it != _userIDmap.end(); ++it)
+    auto it = _userIDarray.begin();
+    for (; it != _userIDarray.end(); ++it)
     {
-        if (it->second == userID) break;
+        if (*it == userID) break;
     }
 
-    if (it == _userIDmap.end()) _userIDmap[_userIDmap.size()] = userID;
+    if (it == _userIDarray.end()) _userIDarray.push_back(userID);
 
     for (auto it = _newMessagesMap[userID].begin(); it != _newMessagesMap[userID].end(); ++it)
     {
@@ -46,14 +46,25 @@ auto NewMessages::removeNewMessage(const std::shared_ptr<Message>& message) -> v
     if (!_newMessagesMap.size()) isNewMsgExists = false;
 }
 
+auto NewMessages::removeAllMessages(int userID) -> void
+{
+    for (auto it = _newMessagesMap[userID].begin(); it != _newMessagesMap[userID].end();)
+    {
+            it = _newMessagesMap[userID].erase(it);
+    }
+    _newMessagesMap.erase(userID);
+    eraseUserID(userID);
+    if (!_newMessagesMap.size()) isNewMsgExists = false;
+}
+
 inline auto NewMessages::eraseUserID(int userID) -> void
 {
-    auto it = _userIDmap.begin();
-    for (auto it = _userIDmap.begin(); it != _userIDmap.end();)
+    auto it = _userIDarray.begin();
+    for (auto it = _userIDarray.begin(); it != _userIDarray.end();)
     {
-        if (it->second == userID)
+        if (*it == userID)
         {
-            _userIDmap.erase(it);
+            _userIDarray.erase(it);
             break;
         }
         else
@@ -63,10 +74,10 @@ inline auto NewMessages::eraseUserID(int userID) -> void
 
 inline auto NewMessages::isUserIDExists(int userID) const -> int
 {
-    for (auto it = _userIDmap.begin(); it != _userIDmap.end(); ++it)
+    for (auto it = _userIDarray.begin(); it != _userIDarray.end(); ++it)
     {
-        if (it->second != userID) continue;
-        return it->first;
+        if (*it != userID) continue;
+        return it - _userIDarray.begin();
     }
     return BAD_INDEX;
 }

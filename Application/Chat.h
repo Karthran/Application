@@ -27,13 +27,13 @@ public:
     auto setSecondUser(const std::shared_ptr<User>& user) -> void { _second_user = user; }
 
     auto getMessageIndex(const std::shared_ptr<Message>& message) -> int;
+    auto getMessageByIndex(int index) -> const std::shared_ptr<Message>& { return _message_array[index]; }
 
     auto save(File& file) -> void;
     auto load(File& file, const std::vector<std::shared_ptr<User>>& user) -> void;
 
 private:
     std::vector<std::shared_ptr<Message>> _message_array{};
-    // int _current_message_num{0};
 
     /* _first_user and _second_user used only Private Chat */
     std::shared_ptr<User> _first_user{nullptr};  /*In _first_user contains the minimum of the two user IDs  */

@@ -202,6 +202,13 @@ auto Application::selectCommonOrPrivate(const std::shared_ptr<User>& user) -> in
     {
         std::string menu_arr[] = {"Select chat type:", "Common chat", "Private chat", "Sign Out"};
 
+        auto user_number{_new_messages_array[user->getUserID()]->usersNumber()};
+        if (user_number)  // if exist new message for this user
+        {
+            menu_arr[2] = BOLDYELLOW + menu_arr[2] + RESET + GREEN + "(New message(s) from " + std::to_string(user_number) + " user(s))" +
+                          RESET;  // menu_arr[2] = "Private chat"
+        }
+
         auto menu_item{menu(menu_arr, 4)};
 
         switch (menu_item)
@@ -264,6 +271,8 @@ auto Application::privateMenu(const std::shared_ptr<User>& user) -> int
     auto isContinue{true};
     while (isContinue)
     {
+        printNewMessagesUsers(user);
+
         std::string menu_arr[]{"Private Chat:", "View chat users names", "Select target user by name", "Select target user by ID", "Exit"};
 
         auto menu_item{menu(menu_arr, 5)};
@@ -340,6 +349,30 @@ auto Application::privateMenu_selectByID(const std::shared_ptr<User>& user) -> v
     }
 }
 
+auto Application::printNewMessagesUsers(const std::shared_ptr<User>& user) -> void
+{
+    auto new_message{_new_messages_array[user->getUserID()]};
+    auto user_number{new_message->usersNumber()};
+    if (user_number)
+    {
+        std::cout << std::endl;
+        std::cout << BOLDYELLOW << UNDER_LINE << "User sended new message(s):" << RESET << std::endl;
+        std::cout << std::endl;
+        std::cout << BOLDGREEN << std::setw(5) << std::setfill(' ') << std::right << "ID"
+                  << "." << BOLDYELLOW << std::setw(MAX_INPUT_SIZE) << std::setfill(' ') << std::left << "User Name" << std::endl;
+
+        for (auto i{0u}; i < user_number; ++i)
+        {
+            auto userID{new_message->getUserID(i)};
+            auto msg_vector{new_message->getMessages(userID)};
+            auto msg_number{msg_vector.size()};
+            std::cout << BOLDGREEN << std::setw(5) << std::setfill(' ') << std::right << userID + 1 << "." << BOLDYELLOW
+                      << std::setw(MAX_INPUT_SIZE) << std::setfill(' ') << std::left << _user_array[userID]->getUserName() << RESET << GREEN
+                      << "(" << msg_number << " new message(s))" << std::endl;  // array's indices begin from 0, Output indices begin from 1
+        }
+    }
+}
+
 auto Application::privateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) -> int
 {
     auto isContinue{true};
@@ -359,6 +392,14 @@ auto Application::privateChat(const std::shared_ptr<User>& source_user, const st
                 {
                     std::cout << std::endl;
                     currentChat->printMessages(0, currentChat->getCurrentMessageNum());
+
+                    auto new_message{_new_messages_array[source_user->getUserID()]};
+                    auto msg_vector{new_message->getMessages(target_user->getUserID())};
+                    auto msg_number{msg_vector.size()};
+                    if (msg_number)
+                    {
+                        new_message->removeAllMessages(target_user->getUserID());
+                    }
                 }
                 break;
             case 2: privateChat_addMessage(source_user, target_user, currentChat); break;
@@ -380,7 +421,7 @@ auto Application::privateChat_addMessage(
         long long second_userID{target_user->getUserID()};
         auto isSwap(Utils::minToMaxOrder(first_userID, second_userID));
 
-        long long mapKey{static_cast<long long>(first_userID) + second_userID};  // Create value for key value
+        long long mapKey{(static_cast<long long>(first_userID) << 32) + second_userID};  // Create value for key value
 
         if (isSwap)
         {
@@ -437,7 +478,7 @@ auto Application::getPrivateChat(const std::shared_ptr<User>& source_user, const
 
     Utils::minToMaxOrder(first_userID, second_userID);
 
-    long long searchID{static_cast<long long>(first_userID) + second_userID};  // Create value for search
+    long long searchID{(static_cast<long long>(first_userID) << 32) + second_userID};  // Create value for search
 
     auto it = _private_chat_array.begin();
 
@@ -478,7 +519,7 @@ auto Application::menu(std::string* string_arr, int size) const -> int
 
 auto Application::save() -> void
 {
-    saveUserArray();
+    if (!saveUserArray()) return;
 
     savePasswordHash();
 
@@ -487,11 +528,11 @@ auto Application::save() -> void
     saveNewMessages();
 }
 
-auto Application::saveUserArray() const -> void
+auto Application::saveUserArray() const -> bool
 {
     // Save vector<User>
     File file_user("User.txt", std::fstream::out);
-    if (file_user.getError()) return;
+    if (file_user.getError()) return false;
 
     file_user.write(_user_array.size());
 
@@ -501,6 +542,7 @@ auto Application::saveUserArray() const -> void
         file_user.write(_user_array[i]->getUserLogin());
         file_user.write(_user_array[i]->getUserID());
     }
+    return true;
 }
 
 auto Application::savePasswordHash() -> void
@@ -534,7 +576,7 @@ auto Application::saveChats() const -> void
     }
 }
 
-auto Application::saveNewMessages() -> void 
+auto Application::saveNewMessages() -> void
 {
     // Save New Messages (Common and Privats)
     File file_newmsg("NewMessages.txt", std::fstream::out);
@@ -546,41 +588,48 @@ auto Application::saveNewMessages() -> void
     {
         auto newMessage{_new_messages_array[i]};
         auto source_users_number{newMessage->usersNumber()};
-        if (!source_users_number) continue; // if  user has no new messages
-        file_newmsg.write(i); // save userID
-        file_newmsg.write(source_users_number);
+        if (!source_users_number) continue;      // if  user has no new messages
+        file_newmsg.write(i);                    // save target userID
+        file_newmsg.write(source_users_number);  // save initiator numbers
 
         for (auto j{0u}; j < source_users_number; ++j)
         {
+
+            auto userID{newMessage->getUserID(j)};
             long long first_userID{i};
-            long long second_userID{j};
+            long long second_userID{userID};
             Utils::minToMaxOrder(first_userID, second_userID);
-            long long mapKey{static_cast<long long>(first_userID) + second_userID};  // Create value for key value
-            auto message{newMessage->getMessages(j)};
-            for (auto k{0}; k < newMessage->newMessageNumber(j); ++k)
+            long long mapKey{(static_cast<long long>(first_userID) << 32) + second_userID};  // Create value for key value
+            file_newmsg.write(userID);                                                       // save initiator ID
+            auto message{newMessage->getMessages(userID)};                                   //
+            auto msg_number{message.size()};                                                 //
+            file_newmsg.write(msg_number);                                                   // msg number from initiator
+
+            for (auto k{0}; k < msg_number; ++k)
             {
-                file_newmsg.write(_private_chat_array[mapKey]->getMessageIndex(message[k]));
+                file_newmsg.write(_private_chat_array[mapKey]->getMessageIndex(message[k]));  // msg index in chat
             }
         }
-
     }
 }
 
 auto Application::load() -> void
 {
-    loadUserArray();
+    if (!loadUserArray()) return;
 
     loadPasswordHash();
 
     loadChats();
+
+    loadNewMessages();
 }
 
 // Load vector<User>
-auto Application::loadUserArray() -> void
+auto Application::loadUserArray() -> bool
 {
     File file_user("User.txt", std::fstream::in);
 
-    if (file_user.getError()) return;
+    if (file_user.getError()) return false;
 
     size_t user_count{0};
     file_user.read(user_count);
@@ -599,8 +648,9 @@ auto Application::loadUserArray() -> void
 
         _user_array.push_back(user);
 
-        _new_messages_array.push_back(std::make_shared<NewMessages>()); // TODO need loading!!!
+        _new_messages_array.push_back(std::make_shared<NewMessages>());  // TODO need loading!!!
     }
+    return true;
 }
 
 // Load Password Hash
@@ -651,4 +701,42 @@ auto Application::loadChats() -> void
 
         _private_chat_array[keyID]->load(file_chat, _user_array);
     }
+}
+
+auto Application::loadNewMessages() -> void
+{
+    // Load New Messages (Common and Privats)
+    File file_newmsg("NewMessages.txt", std::fstream::in);
+    if (file_newmsg.getError()) return;
+    auto user_number{0};
+    file_newmsg.read(user_number);
+    while (!file_newmsg.getStream().eof()) /* for (auto i{0}; i < user_number; ++i)*/
+    {
+        auto target_userID{0};
+        file_newmsg.read(target_userID);
+        auto users_with_new_msg_number{0};
+        file_newmsg.read(users_with_new_msg_number);
+        for (auto j{0}; j < users_with_new_msg_number; ++j)
+        {
+            auto init_userID{0};
+            file_newmsg.read(init_userID);
+
+            long long first_userID{target_userID};
+            long long second_userID{init_userID};
+
+            Utils::minToMaxOrder(first_userID, second_userID);
+            long long mapKey{(static_cast<long long>(first_userID) << 32) + second_userID};  // Create value for key value
+            auto chat{_private_chat_array[mapKey]};
+            auto msg_number{0};
+            file_newmsg.read(msg_number);
+            for (auto k{0}; k < msg_number; ++k)
+            {
+                auto msg_index{0};
+                file_newmsg.read(msg_index);
+                auto message{chat->getMessageByIndex(msg_index)};
+                _new_messages_array[target_userID]->addNewMessage(message);
+            }
+        }
+    }
+    return;
 }

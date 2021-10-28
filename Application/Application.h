@@ -50,6 +50,7 @@ private:
     auto privateMenu_viewUsersNames() const -> void;
     auto privateMenu_selectByName(const std::shared_ptr<User>& user) const -> int;
     auto privateMenu_selectByID(const std::shared_ptr<User>& user) -> void;
+    auto printNewMessagesUsers(const std::shared_ptr<User>& user) -> void;
 
     auto privateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) -> int;
 
@@ -73,13 +74,13 @@ private:
     auto menu(std::string* string_arr, int size) const -> int;
 
     auto save() -> void;
-    auto saveUserArray() const -> void;
+    auto saveUserArray() const -> bool;
     auto savePasswordHash() -> void;
     auto saveChats() const -> void;
     auto saveNewMessages() -> void;
 
     auto load() -> void;
-    auto loadUserArray() -> void;
+    auto loadUserArray() -> bool;
     auto loadPasswordHash() -> void;
     auto loadChats() -> void;
     auto loadNewMessages() -> void;

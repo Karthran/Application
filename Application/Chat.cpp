@@ -103,7 +103,7 @@ auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -
         std::cout << RESET;
 
         auto it = _message_array.begin();
-        auto message {_message_array[message_index]};
+        auto message{_message_array[message_index]};
         _message_array.erase(it + message_index);
 
         return message;
@@ -154,7 +154,7 @@ auto Chat::getMessageIndex(const std::shared_ptr<Message>& message) -> int
     {
         if (_message_array[i].get() == message.get()) return i;
     }
-    return -1; // bad index
+    return -1;  // bad index
 }
 
 auto Chat::save(File& file) -> void
@@ -173,7 +173,11 @@ auto Chat::save(File& file) -> void
 
     for (auto i{0u}; i < message_number; ++i)
     {
-        file.write(_message_array[i]->getMessage());
+        auto message{_message_array[i]->getMessage()};
+        auto msg_size{message.size()};
+        file.write(msg_size);
+        message += '\n';
+        file.write(message);
         file.write(_message_array[i]->getUser()->getUserID());
         file.write(_message_array[i]->getMessageCreationTime());
         auto flag = _message_array[i]->isEdited() ? 1 : 0;
@@ -184,12 +188,18 @@ auto Chat::save(File& file) -> void
 
 auto Chat::load(File& file, const std::vector<std::shared_ptr<User>>& user) -> void
 {
+  
     size_t message_number{0};
     file.read(message_number);
     for (auto i{0u}; i < message_number; ++i)
     {
-        std::string message{};
-        file.read(message);
+        auto msg_size{0};
+        file.read(msg_size);
+        char* str = new char[msg_size + 2]{};         //+1 for '\0' , +1 for separator
+        file.getStream().getline(str, msg_size + 2,'\n');  //
+        std::string message(str + 1);                 // skip the separator
+
+        delete[] str;
 
         auto userID{0};
         file.read(userID);
