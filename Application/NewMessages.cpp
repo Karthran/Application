@@ -59,7 +59,6 @@ auto NewMessages::removeAllMessages(int userID) -> void
 
 inline auto NewMessages::eraseUserID(int userID) -> void
 {
-    auto it = _userIDarray.begin();
     for (auto it = _userIDarray.begin(); it != _userIDarray.end();)
     {
         if (*it == userID)

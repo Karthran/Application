@@ -12,6 +12,7 @@ public:
         : _message(message), _user(user), _message_creation_time(message_creation_time)
     {
        /* std::cout << "Message constr " << this << std::endl; */
+       _is_message_initialized = true;
     }
     ~Message() { /*std::cout << "Message destr " << this << std::endl;*/ }
     auto setMessage(const std::string& message) -> void { _message = message; }
@@ -33,12 +34,15 @@ public:
         _is_edited = true;
     }
 
-private:
+    auto isInitialized() -> bool {return _is_message_initialized;}
+
+  private:
     std::string _message{};
     std::shared_ptr<User> _user{nullptr};
     tm _message_creation_time{};
     bool _is_edited = false;
     tm _message_editing_time{};
+    bool _is_message_initialized{false};
 };
 
 

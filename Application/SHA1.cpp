@@ -69,12 +69,12 @@ auto sha1(const std::string& message, const std::string& salt) -> std::shared_pt
         Block block = (Block)cur_p;
 
         // первые 16 4байтовых чисел
-        for (int j = 0; j < one_block_size_uints; j++)
+        for (int j = 0; j < static_cast<int>(one_block_size_uints); j++)
         {
             exp_block[j] = bring_to_human_view(block[j]);
         }
         // следующие 64...
-        for (int j = one_block_size_uints; j < block_expend_size_uints; j++)
+        for (int j = static_cast<int>(one_block_size_uints); j < static_cast<int>(block_expend_size_uints); j++)
         {
             exp_block[j] = exp_block[j - 3] ^ exp_block[j - 8] ^ exp_block[j - 14] ^ exp_block[j - 16];
             exp_block[j] = cycle_shift_left(exp_block[j], 1);
@@ -88,7 +88,7 @@ auto sha1(const std::string& message, const std::string& salt) -> std::shared_pt
         uint e = H[4];
 
         // пересчитываем
-        for (int j = 0; j < block_expend_size_uints; j++)
+        for (int j = 0; j < static_cast<int>(block_expend_size_uints); j++)
         {
             uint f;
             uint k;

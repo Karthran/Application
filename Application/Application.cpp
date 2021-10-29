@@ -12,6 +12,7 @@
 #include "PasswordHash.h"
 #include "FileUtils.h"
 #include "NewMessages.h"
+#include "Message.h"
 
 Application::Application()
 {
@@ -339,7 +340,7 @@ auto Application::privateMenu_selectByID(const std::shared_ptr<User>& user) -> v
     std::cout << std::endl << RESET << YELLOW << "Input target user ID: " << BOLDGREEN;
     auto index{Utils::inputIntegerValue()};
     std::cout << RESET;
-    if(index <= 0 || index > _user_array.size()) return;
+    if(index <= 0 || index > static_cast<int>(_user_array.size())) return;
     try
     {
         privateChat(user, _user_array[index - 1]);  // array's indices begin from 0, Output indices begin from 1
@@ -417,6 +418,7 @@ auto Application::privateChat_addMessage(
 {
     if (!chat->isInitialized())
     {
+       // chat = std::make_shared<Chat>();
         long long first_userID{source_user->getUserID()};
         long long second_userID{target_user->getUserID()};
         auto isSwap(Utils::minToMaxOrder(first_userID, second_userID));
@@ -438,6 +440,7 @@ auto Application::privateChat_addMessage(
         chat->setInitialized(true);
     }
     auto message{chat->addMessage(source_user)};
+    if(!message->isInitialized()) return;
     auto index{target_user->getUserID()};
     _new_messages_array[index]->addNewMessage(message);
 }
@@ -449,7 +452,9 @@ auto Application::privateChat_editMessage(
     std::cout << RESET;
     if (chat)
     {
-        auto message{chat->editMessage(source_user, message_number - 1)};  // array's indices begin from 0, Output indices begin from 1
+        auto message{chat->editMessage(source_user, message_number - 1)}; // array's indices begin from 0, Output indices begin from 1
+        if(!message->isInitialized()) return;
+
         auto index{target_user->getUserID()};
         _new_messages_array[index]->addNewMessage(message);
     }
@@ -464,6 +469,7 @@ auto Application::privateChat_deleteMessage(
     if (chat)
     {
         auto message{chat->deleteMessage(source_user, message_number - 1)};  // array's indices begin from 0, Output indices begin from 1
+        if(!message->isInitialized()) return;
 
         auto index{target_user->getUserID()};
 
@@ -550,7 +556,7 @@ auto Application::savePasswordHash() -> void
 {
     // Save _password_hash
     File file_hash("UserHash.txt", std::fstream::out);
-    for (auto i{0}; i < _user_array.size(); ++i)
+    for (auto i{0}; i < static_cast<int>(_user_array.size()); ++i)
     {
         file_hash.write(_password_hash[_user_array[i]->getUserLogin()]->getSalt());
         Hash hash = _password_hash[_user_array[i]->getUserLogin()]->getHash();
@@ -606,7 +612,7 @@ auto Application::saveNewMessages() -> void
             auto msg_number{message.size()};                                                 //
             file_newmsg.write(msg_number);                                                   // msg number from initiator
 
-            for (auto k{0}; k < msg_number; ++k)
+            for (auto k{0}; k < static_cast<int>(msg_number); ++k)
             {
                 file_newmsg.write(_private_chat_array[mapKey]->getMessageIndex(message[k]));  // msg index in chat
             }
@@ -658,7 +664,7 @@ auto Application::loadUserArray() -> bool
 auto Application::loadPasswordHash() -> void
 {
     File file_hash("UserHash.txt", std::fstream::in);
-    for (auto i{0}; i < _user_array.size(); ++i)
+    for (auto i{0}; i < static_cast<int>(_user_array.size()); ++i)
     {
         std::string salt{};
         file_hash.read(salt);
@@ -687,7 +693,7 @@ auto Application::loadChats() -> void
     size_t private_chats_number{0};
     file_chat.read(private_chats_number);
 
-    for (auto i{0}; i < private_chats_number; ++i)
+    for (auto i{0}; i < static_cast<int>(private_chats_number); ++i)
     {
         int first_userID{0}, second_userID{0};
         file_chat.read(first_userID);

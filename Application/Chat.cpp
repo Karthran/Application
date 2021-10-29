@@ -63,18 +63,17 @@ auto Chat::printMessage(int message_index) const -> void
     std::cout << BOLDCYAN << std::setw(120) << std::setfill('-') << "-" << RESET << std::endl;
 }
 
-auto Chat::addMessage(const std::shared_ptr<User>& user) -> const std::shared_ptr<Message>&
+auto Chat::addMessage(const std::shared_ptr<User>& user) -> const std::shared_ptr<Message>
 {
     try
     {
-        char str[256];
         std::cout << std::endl << YELLOW << "Input message: " << BOLDGREEN;
 
         std::string new_message{};
         std::getline(std::cin, new_message);
         std::cout << RESET;
         std::cout << BOLDYELLOW << "Send message?(Y/N):" << BOLDGREEN;
-        if (!Utils::isOKSelect()) return nullptr;
+        if (!Utils::isOKSelect()) return std::make_shared<Message>();
         std::cout << RESET;
 
         time_t seconds{time(NULL)};
@@ -88,19 +87,20 @@ auto Chat::addMessage(const std::shared_ptr<User>& user) -> const std::shared_pt
     {
         std::cout << BOLDRED << "Exception: " << e.what() << RESET << std::endl;
     }
-    return nullptr;
+    return std::make_shared<Message>();
 }
 
-auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>&
+auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>
 {
+    if(message_index < 0 || message_index >= static_cast<int>(_message_array.size())) return std::make_shared<Message>();
     try
     {
-        if (user != _message_array.at(message_index)->getUser()) return nullptr;
+        if (user != _message_array[message_index]->getUser()) return std::make_shared<Message>();
 
         printMessage(message_index);
 
         std::cout << BOLDYELLOW << "Delete message?(Y/N):" << BOLDGREEN;
-        if (!Utils::isOKSelect()) return nullptr;
+        if (!Utils::isOKSelect()) return std::make_shared<Message>();
         std::cout << RESET;
 
         auto it = _message_array.begin();
@@ -113,14 +113,15 @@ auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -
     {
         std::cout << BOLDRED << "Exception: " << e.what() << RESET << std::endl;
     }
-    return nullptr;
+    return std::make_shared<Message>();
 }
 
-auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>&
+auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>
 {
+    if(message_index < 0 || message_index >= static_cast<int>(_message_array.size())) return std::make_shared<Message>();
     try
     {
-        if (user != _message_array.at(message_index)->getUser()) return nullptr;
+        if (user != _message_array[message_index]->getUser()) return std::make_shared<Message>();
 
         printMessage(message_index);
 
@@ -131,7 +132,7 @@ auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> 
         std::cout << RESET;
 
         std::cout << BOLDYELLOW << "Save changes?(Y/N):" << BOLDGREEN;
-        if (!Utils::isOKSelect()) return nullptr;
+        if (!Utils::isOKSelect()) return std::make_shared<Message>();
         std::cout << RESET;
 
         time_t seconds{time(NULL)};
@@ -146,7 +147,7 @@ auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> 
     {
         std::cout << BOLDRED << "Exception: " << e.what() << RESET << std::endl;
     }
-    return nullptr;
+    return std::make_shared<Message>();
 }
 
 auto Chat::getMessageIndex(const std::shared_ptr<Message>& message) -> int
