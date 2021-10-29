@@ -22,7 +22,7 @@ const std::string BOLDWHITE = "\033[1m\033[37m";   /* Bold White */
 
 const int MAX_INPUT_SIZE = 30;
 const int UNSUCCESSFUL = -1;
-const int SUCCESSFUL  = 1;
+const int SUCCESSFUL = 1;
 const int MAX_MESSAGES_IN_CHAT = 10000;
 const int MESSAGES_ON_PAGE = 5;
 const int LINE_TO_PAGE = 15;

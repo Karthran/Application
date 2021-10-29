@@ -10,7 +10,7 @@ auto cycle_shift_left(uint val, int bit_count) -> uint
     return (val << bit_count | val >> (32 - bit_count));
 }
 
-auto bring_to_human_view(uint val)->uint
+auto bring_to_human_view(uint val) -> uint
 {
     return ((val & 0x000000FF) << 24) | ((val & 0x0000FF00) << 8) | ((val & 0x00FF0000) >> 8) | ((val & 0xFF000000) >> 24);
 }
@@ -151,7 +151,7 @@ auto getSalt() -> const std::string
 {
     std::string salt{};
     srand(static_cast<uint>(time(0)));
-    auto SaltArrayLength{sizeof(alphanum) - 1}; // -1 for last '\0'
+    auto SaltArrayLength{sizeof(alphanum) - 1};  // -1 for last '\0'
     for (auto i{0u}; i < SALTLENGTH; ++i)
     {
         salt.push_back(alphanum[rand() % SaltArrayLength]);

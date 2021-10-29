@@ -12,12 +12,12 @@
 
 Chat::Chat()
 {
-   /* std::cout << "Chat constr " << this << std::endl;*/
+    /* std::cout << "Chat constr " << this << std::endl;*/
 }
 
 Chat::~Chat()
 {
-   /* std::cout << "Chat destr " << this << std::endl;*/
+    /* std::cout << "Chat destr " << this << std::endl;*/
 }
 
 auto Chat::printMessages(int first_index, int number) const -> void
@@ -92,7 +92,7 @@ auto Chat::addMessage(const std::shared_ptr<User>& user) -> const std::shared_pt
 
 auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>
 {
-    if(message_index < 0 || message_index >= static_cast<int>(_message_array.size())) return std::make_shared<Message>();
+    if (message_index < 0 || message_index >= static_cast<int>(_message_array.size())) return std::make_shared<Message>();
     try
     {
         if (user != _message_array[message_index]->getUser()) return std::make_shared<Message>();
@@ -118,7 +118,7 @@ auto Chat::deleteMessage(const std::shared_ptr<User>& user, int message_index) -
 
 auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>
 {
-    if(message_index < 0 || message_index >= static_cast<int>(_message_array.size())) return std::make_shared<Message>();
+    if (message_index < 0 || message_index >= static_cast<int>(_message_array.size())) return std::make_shared<Message>();
     try
     {
         if (user != _message_array[message_index]->getUser()) return std::make_shared<Message>();
@@ -197,9 +197,9 @@ auto Chat::load(File& file, const std::vector<std::shared_ptr<User>>& user) -> v
     {
         auto msg_size{0};
         file.read(msg_size);
-        char* str = new char[msg_size + 2]{};         //+1 for '\0' , +1 for separator
-        file.getStream().getline(str, msg_size + 2,'\n');  //
-        std::string message(str + 1);                 // skip the separator
+        char* str = new char[msg_size + 2]{};               //+1 for '\0' , +1 for separator
+        file.getStream().getline(str, msg_size + 2, '\n');  //
+        std::string message(str + 1);                       // skip the separator
 
         delete[] str;
 

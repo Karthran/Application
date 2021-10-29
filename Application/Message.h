@@ -7,14 +7,16 @@ class User;
 class Message
 {
 public:
-    Message() { /*std::cout << "Message constr " << this << std::endl;*/ };
+    Message(){/*std::cout << "Message constr " << this << std::endl;*/};
     Message(const std::string& message, const std::shared_ptr<User>& user, const tm& message_creation_time)
         : _message(message), _user(user), _message_creation_time(message_creation_time)
     {
-       /* std::cout << "Message constr " << this << std::endl; */
-       _is_message_initialized = true;
+        /* std::cout << "Message constr " << this << std::endl; */
+        _is_message_initialized = true;
     }
-    ~Message() { /*std::cout << "Message destr " << this << std::endl;*/ }
+    ~Message()
+    { /*std::cout << "Message destr " << this << std::endl;*/
+    }
     auto setMessage(const std::string& message) -> void { _message = message; }
     auto setUser(const std::shared_ptr<User>& user) -> void { _user = user; }
     auto setMessageCreationTime(const tm& time) -> void { _message_creation_time = time; }
@@ -34,9 +36,9 @@ public:
         _is_edited = true;
     }
 
-    auto isInitialized() -> bool {return _is_message_initialized;}
+    auto isInitialized() -> bool { return _is_message_initialized; }
 
-  private:
+private:
     std::string _message{};
     std::shared_ptr<User> _user{nullptr};
     tm _message_creation_time{};
@@ -44,5 +46,3 @@ public:
     tm _message_editing_time{};
     bool _is_message_initialized{false};
 };
-
-

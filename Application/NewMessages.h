@@ -9,8 +9,12 @@ const int BAD_INDEX = -1;
 class NewMessages
 {
 public:
-    NewMessages() { /*std::cout << "NewMessages constr " << this << std::endl;*/ }
-    ~NewMessages() { /*std::cout << "NewMessages destr " << this << std::endl;*/ }
+    NewMessages()
+    { /*std::cout << "NewMessages constr " << this << std::endl;*/
+    }
+    ~NewMessages()
+    { /*std::cout << "NewMessages destr " << this << std::endl;*/
+    }
 
     auto isNewMessagesExists() const -> bool { return isNewMsgExists; }
     auto addNewMessage(const std::shared_ptr<Message>& message) -> void;
@@ -26,10 +30,9 @@ public:
 
 private:
     std::vector<int> _userIDarray{};
-    std::map<int, std::vector<std::shared_ptr<Message>>> _newMessagesMap{}; // key userID; value Message
+    std::map<int, std::vector<std::shared_ptr<Message>>> _newMessagesMap{};  // key userID; value Message
     bool isNewMsgExists{false};
     tm _lastVisitTime{};
 
     auto eraseUserID(int userID) -> void;
 };
-

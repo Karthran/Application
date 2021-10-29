@@ -33,8 +33,8 @@ public:
     auto save(File& file) -> void;
     auto load(File& file, const std::vector<std::shared_ptr<User>>& user) -> void;
 
-    auto isInitialized() -> bool {return _is_chat_initialized;}
-    auto setInitialized(bool flag) -> void{_is_chat_initialized = flag;}
+    auto isInitialized() -> bool { return _is_chat_initialized; }
+    auto setInitialized(bool flag) -> void { _is_chat_initialized = flag; }
 
 private:
     std::vector<std::shared_ptr<Message>> _message_array{};

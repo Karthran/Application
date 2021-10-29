@@ -16,20 +16,20 @@ auto Utils::inputIntegerValue() -> int
     auto value{UNSUCCESSFUL};
     while (true)
     {
-       std::cin >> value;
+        std::cin >> value;
 
-       if (std::cin.fail())
-       {
-        std::cin.clear();
-        std::cin.ignore(MAX_INT,'\n');//, '\n');
-        std::cout << "Incorrect value entered!" << std::endl;
-        std::cout << "Try again: ";
-       }
-       else
-       {
-           std::cin.ignore(MAX_INT,'\n');//, '\n');
-           return value;
-       }
+        if (std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore(MAX_INT, '\n');  //, '\n');
+            std::cout << "Incorrect value entered!" << std::endl;
+            std::cout << "Try again: ";
+        }
+        else
+        {
+            std::cin.ignore(MAX_INT, '\n');  //, '\n');
+            return value;
+        }
     }
 }
 
@@ -48,4 +48,3 @@ auto Utils::getString(std::string& string, int size) -> void
 {
     std::cin >> string;
 }
-

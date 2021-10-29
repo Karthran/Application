@@ -27,6 +27,5 @@ const uint H[5] = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0}; 
 auto cycle_shift_left(uint val, int bit_count) -> uint;
 auto bring_to_human_view(uint val) -> uint;
 
-
 auto sha1(const std::string& message, const std::string& salt) -> std::shared_ptr<PasswordHash>;
 auto getSalt() -> const std::string;

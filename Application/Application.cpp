@@ -340,7 +340,7 @@ auto Application::privateMenu_selectByID(const std::shared_ptr<User>& user) -> v
     std::cout << std::endl << RESET << YELLOW << "Input target user ID: " << BOLDGREEN;
     auto index{Utils::inputIntegerValue()};
     std::cout << RESET;
-    if(index <= 0 || index > static_cast<int>(_user_array.size())) return;
+    if (index <= 0 || index > static_cast<int>(_user_array.size())) return;
     try
     {
         privateChat(user, _user_array[index - 1]);  // array's indices begin from 0, Output indices begin from 1
@@ -418,7 +418,7 @@ auto Application::privateChat_addMessage(
 {
     if (!chat->isInitialized())
     {
-       // chat = std::make_shared<Chat>();
+        // chat = std::make_shared<Chat>();
         long long first_userID{source_user->getUserID()};
         long long second_userID{target_user->getUserID()};
         auto isSwap(Utils::minToMaxOrder(first_userID, second_userID));
@@ -440,7 +440,7 @@ auto Application::privateChat_addMessage(
         chat->setInitialized(true);
     }
     auto message{chat->addMessage(source_user)};
-    if(!message->isInitialized()) return;
+    if (!message->isInitialized()) return;
     auto index{target_user->getUserID()};
     _new_messages_array[index]->addNewMessage(message);
 }
@@ -452,8 +452,8 @@ auto Application::privateChat_editMessage(
     std::cout << RESET;
     if (chat)
     {
-        auto message{chat->editMessage(source_user, message_number - 1)}; // array's indices begin from 0, Output indices begin from 1
-        if(!message->isInitialized()) return;
+        auto message{chat->editMessage(source_user, message_number - 1)};  // array's indices begin from 0, Output indices begin from 1
+        if (!message->isInitialized()) return;
 
         auto index{target_user->getUserID()};
         _new_messages_array[index]->addNewMessage(message);
@@ -469,7 +469,7 @@ auto Application::privateChat_deleteMessage(
     if (chat)
     {
         auto message{chat->deleteMessage(source_user, message_number - 1)};  // array's indices begin from 0, Output indices begin from 1
-        if(!message->isInitialized()) return;
+        if (!message->isInitialized()) return;
 
         auto index{target_user->getUserID()};
 
@@ -494,7 +494,7 @@ auto Application::getPrivateChat(const std::shared_ptr<User>& source_user, const
         if (it->first == searchID) return it->second;
     }
 
-    return std::make_shared<Chat>();//std::shared_ptr<Chat>();
+    return std::make_shared<Chat>();  // std::shared_ptr<Chat>();
 }
 
 auto Application::checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const -> int

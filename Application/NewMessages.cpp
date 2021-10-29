@@ -16,7 +16,7 @@ auto NewMessages::addNewMessage(const std::shared_ptr<Message>& message) -> void
 
     for (auto it = _newMessagesMap[userID].begin(); it != _newMessagesMap[userID].end(); ++it)
     {
-        if (it->get() == message.get()) return; // message already exists
+        if (it->get() == message.get()) return;  // message already exists
     }
 
     _newMessagesMap[userID].push_back(message);
@@ -36,7 +36,7 @@ auto NewMessages::removeNewMessage(const std::shared_ptr<Message>& message) -> v
         }
         else
             ++it;
-     }
+    }
     auto msg_numbers = _newMessagesMap[userID].size();
     if (!msg_numbers)
     {
@@ -50,7 +50,7 @@ auto NewMessages::removeAllMessages(int userID) -> void
 {
     for (auto it = _newMessagesMap[userID].begin(); it != _newMessagesMap[userID].end();)
     {
-            it = _newMessagesMap[userID].erase(it);
+        it = _newMessagesMap[userID].erase(it);
     }
     _newMessagesMap.erase(userID);
     eraseUserID(userID);
