@@ -6,9 +6,9 @@ class PasswordHash;
 
 typedef unsigned int uint;
 
-const uint one_block_size_bytes = 64;     // êîëè÷åñòâî áàéá â áëîêå
-const uint one_block_size_uints = 16;     // êîëè÷åñòâî 4áàéòîâûõ  â áëîêå
-const uint block_expend_size_uints = 80;  // êîëè÷åñòâî 4áàéòîâûõ â äîïîëíåííîì áëîêå
+const uint one_block_size_bytes = 64;     // ĞºĞ¾Ğ»Ğ¸Ñ‡ĞµÑÑ‚Ğ²Ğ¾ Ğ±Ğ°Ğ¹Ğ± Ğ² Ğ±Ğ»Ğ¾ĞºĞµ
+const uint one_block_size_uints = 16;     // ĞºĞ¾Ğ»Ğ¸Ñ‡ĞµÑÑ‚Ğ²Ğ¾ 4Ğ±Ğ°Ğ¹Ñ‚Ğ¾Ğ²Ñ‹Ñ…  Ğ² Ğ±Ğ»Ğ¾ĞºĞµ
+const uint block_expend_size_uints = 80;  // ĞºĞ¾Ğ»Ğ¸Ñ‡ĞµÑÑ‚Ğ²Ğ¾ 4Ğ±Ğ°Ğ¹Ñ‚Ğ¾Ğ²Ñ‹Ñ… Ğ² Ğ´Ğ¾Ğ¿Ğ¾Ğ»Ğ½ĞµĞ½Ğ½Ğ¾Ğ¼ Ğ±Ğ»Ğ¾ĞºĞµ
 
 const uint SHA1HASHLENGTHBYTES = 20;
 const uint SHA1HASHLENGTHUINTS = 5;
@@ -22,11 +22,11 @@ const char alphanum[] = "0123456789"
                         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                         "abcdefghijklmnopqrstuvwxyz";
 
-const uint H[5] = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};  // êîíñòàíòû, ñîãëàñíî ñòàíäàğòó
+const uint H[5] = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};  // ĞºĞ¾Ğ½ÑÑ‚Ğ°Ğ½Ñ‚Ñ‹, ÑĞ¾Ğ³Ğ»Ğ°ÑĞ½Ğ¾ ÑÑ‚Ğ°Ğ½Ğ´Ğ°Ñ€Ñ‚Ñƒ
 
 auto cycle_shift_left(uint val, int bit_count) -> uint;
 auto bring_to_human_view(uint val) -> uint;
 
 
-auto sha1(const std::string& message, const std::string& salt) -> std::shared_ptr<PasswordHash>;  
+auto sha1(const std::string& message, const std::string& salt) -> std::shared_ptr<PasswordHash>;
 auto getSalt() -> const std::string;

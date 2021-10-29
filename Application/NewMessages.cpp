@@ -16,7 +16,7 @@ auto NewMessages::addNewMessage(const std::shared_ptr<Message>& message) -> void
 
     for (auto it = _newMessagesMap[userID].begin(); it != _newMessagesMap[userID].end(); ++it)
     {
-        if (it->get() == message.get()) return; // message already exists 
+        if (it->get() == message.get()) return; // message already exists
     }
 
     _newMessagesMap[userID].push_back(message);

@@ -25,7 +25,6 @@ public:
     auto getLastVisitTime() -> const tm& { return _lastVisitTime; }
 
 private:
-    //std::map<int, int> _userIDarray{}; // key - index ; value userID
     std::vector<int> _userIDarray{};
     std::map<int, std::vector<std::shared_ptr<Message>>> _newMessagesMap{}; // key userID; value Message
     bool isNewMsgExists{false};

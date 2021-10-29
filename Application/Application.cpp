@@ -159,7 +159,7 @@ auto Application::signIn() -> int
             auto it = _password_hash.find(user_login);
             std::shared_ptr<PasswordHash> password_hash = sha1(user_password, it->second->getSalt());
             auto password_match{true};
-            for (auto i{0}; i < SHA1HASHLENGTHUINTS; ++i)
+            for (auto i{0u}; i < SHA1HASHLENGTHUINTS; ++i)
             {
                 if (it->second->getHash() == password_hash->getHash()) continue;
                 password_match = false;
@@ -339,9 +339,10 @@ auto Application::privateMenu_selectByID(const std::shared_ptr<User>& user) -> v
     std::cout << std::endl << RESET << YELLOW << "Input target user ID: " << BOLDGREEN;
     auto index{Utils::inputIntegerValue()};
     std::cout << RESET;
+    if(index <= 0 || index > _user_array.size()) return;
     try
     {
-        privateChat(user, _user_array.at(index - 1));  // array's indices begin from 0, Output indices begin from 1
+        privateChat(user, _user_array[index - 1]);  // array's indices begin from 0, Output indices begin from 1
     }
     catch (std::exception& e)
     {
@@ -414,9 +415,8 @@ auto Application::privateChat(const std::shared_ptr<User>& source_user, const st
 auto Application::privateChat_addMessage(
     const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, std::shared_ptr<Chat>& chat) -> void
 {
-    if (!chat)
+    if (!chat->isInitialized())
     {
-        chat = std::make_shared<Chat>();
         long long first_userID{source_user->getUserID()};
         long long second_userID{target_user->getUserID()};
         auto isSwap(Utils::minToMaxOrder(first_userID, second_userID));
@@ -435,6 +435,7 @@ auto Application::privateChat_addMessage(
         }
         _private_chat_array[mapKey] = chat;
         ++_current_chat_number;
+        chat->setInitialized(true);
     }
     auto message{chat->addMessage(source_user)};
     auto index{target_user->getUserID()};
@@ -471,7 +472,7 @@ auto Application::privateChat_deleteMessage(
 }
 
 auto Application::getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
-    -> const std::shared_ptr<Chat>&
+    -> const std::shared_ptr<Chat>
 {
     long long first_userID{source_user->getUserID()};
     long long second_userID{target_user->getUserID()};
@@ -487,7 +488,7 @@ auto Application::getPrivateChat(const std::shared_ptr<User>& source_user, const
         if (it->first == searchID) return it->second;
     }
 
-    return std::shared_ptr<Chat>();
+    return std::make_shared<Chat>();//std::shared_ptr<Chat>();
 }
 
 auto Application::checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const -> int
@@ -536,7 +537,7 @@ auto Application::saveUserArray() const -> bool
 
     file_user.write(_user_array.size());
 
-    for (auto i{0}; i < _user_array.size(); ++i)
+    for (auto i{0u}; i < _user_array.size(); ++i)
     {
         file_user.write(_user_array[i]->getUserName());
         file_user.write(_user_array[i]->getUserLogin());

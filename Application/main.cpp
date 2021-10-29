@@ -4,8 +4,6 @@
 
 auto main() -> int
 {
-  //  setlocale(LC_ALL, "");
-
     Application app;
     app.run();
 

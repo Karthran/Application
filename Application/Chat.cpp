@@ -67,9 +67,10 @@ auto Chat::addMessage(const std::shared_ptr<User>& user) -> const std::shared_pt
 {
     try
     {
-        std::string new_message{};
-
+        char str[256];
         std::cout << std::endl << YELLOW << "Input message: " << BOLDGREEN;
+
+        std::string new_message{};
         std::getline(std::cin, new_message);
         std::cout << RESET;
         std::cout << BOLDYELLOW << "Send message?(Y/N):" << BOLDGREEN;
@@ -188,7 +189,7 @@ auto Chat::save(File& file) -> void
 
 auto Chat::load(File& file, const std::vector<std::shared_ptr<User>>& user) -> void
 {
-  
+
     size_t message_number{0};
     file.read(message_number);
     for (auto i{0u}; i < message_number; ++i)

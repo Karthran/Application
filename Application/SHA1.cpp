@@ -21,17 +21,17 @@ auto sha1(const std::string& message, const std::string& salt) -> std::shared_pt
 
     uint msize_bytes{static_cast<uint>(password_salt.size())};
 
-    //инициализация
+    //РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ
     uint A = H[0];
     uint B = H[1];
     uint C = H[2];
     uint D = H[3];
     uint E = H[4];
 
-    // подсчет целого числа блоков
+    // РїРѕРґСЃС‡РµС‚ С†РµР»РѕРіРѕ С‡РёСЃР»Р° Р±Р»РѕРєРѕРІ
     uint totalBlockCount = msize_bytes / one_block_size_bytes;
 
-    // подсчет, сколько байт нужно, чтобы дополнить последний блок
+    // РїРѕРґСЃС‡РµС‚, СЃРєРѕР»СЊРєРѕ Р±Р°Р№С‚ РЅСѓР¶РЅРѕ, С‡С‚РѕР±С‹ РґРѕРїРѕР»РЅРёС‚СЊ РїРѕСЃР»РµРґРЅРёР№ Р±Р»РѕРє
     uint needAdditionalBytes = one_block_size_bytes - (msize_bytes - totalBlockCount * one_block_size_bytes);
 
     if (needAdditionalBytes < 8)
@@ -44,55 +44,55 @@ auto sha1(const std::string& message, const std::string& salt) -> std::shared_pt
         totalBlockCount += 1;
     }
 
-    // размер дополненного по всем правилам сообщения
+    // СЂР°Р·РјРµСЂ РґРѕРїРѕР»РЅРµРЅРЅРѕРіРѕ РїРѕ РІСЃРµРј РїСЂР°РІРёР»Р°Рј СЃРѕРѕР±С‰РµРЅРёСЏ
     uint extendedMessageSize = msize_bytes + needAdditionalBytes;
 
-    // выделяем новый буфер и копируем в него исходный
+    // РІС‹РґРµР»СЏРµРј РЅРѕРІС‹Р№ Р±СѓС„РµСЂ Рё РєРѕРїРёСЂСѓРµРј РІ РЅРµРіРѕ РёСЃС…РѕРґРЅС‹Р№
     unsigned char* newMessage = new unsigned char[extendedMessageSize];
     memcpy(newMessage, password_salt.c_str(), msize_bytes);
 
-    // первый бит ставим '1', остальные обнуляем
+    // РїРµСЂРІС‹Р№ Р±РёС‚ СЃС‚Р°РІРёРј '1', РѕСЃС‚Р°Р»СЊРЅС‹Рµ РѕР±РЅСѓР»СЏРµРј
     newMessage[msize_bytes] = 0x80;
     memset(newMessage + msize_bytes + 1, 0, needAdditionalBytes - 1);
 
-    // задаем длину исходного сообщения в битах
+    // Р·Р°РґР°РµРј РґР»РёРЅСѓ РёСЃС…РѕРґРЅРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ РІ Р±РёС‚Р°С…
     uint* ptr_to_size = (uint*)(newMessage + extendedMessageSize - 4);
     *ptr_to_size = bring_to_human_view(msize_bytes * 8);
 
     ExpendBlock exp_block;
-    //раунды поехали
+    //СЂР°СѓРЅРґС‹ РїРѕРµС…Р°Р»Рё
     for (uint i = 0; i < totalBlockCount; i++)
     {
 
-        // берем текущий блок и дополняем его
+        // Р±РµСЂРµРј С‚РµРєСѓС‰РёР№ Р±Р»РѕРє Рё РґРѕРїРѕР»РЅСЏРµРј РµРіРѕ
         unsigned char* cur_p = newMessage + one_block_size_bytes * i;
         Block block = (Block)cur_p;
 
-        // первые 16 4байтовых чисел
+        // РїРµСЂРІС‹Рµ 16 4Р±Р°Р№С‚РѕРІС‹С… С‡РёСЃРµР»
         for (int j = 0; j < one_block_size_uints; j++)
         {
             exp_block[j] = bring_to_human_view(block[j]);
         }
-        // следующие 64...
+        // СЃР»РµРґСѓСЋС‰РёРµ 64...
         for (int j = one_block_size_uints; j < block_expend_size_uints; j++)
         {
             exp_block[j] = exp_block[j - 3] ^ exp_block[j - 8] ^ exp_block[j - 14] ^ exp_block[j - 16];
             exp_block[j] = cycle_shift_left(exp_block[j], 1);
         }
 
-        // инициализация
+        // РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ
         uint a = H[0];
         uint b = H[1];
         uint c = H[2];
         uint d = H[3];
         uint e = H[4];
 
-        // пересчитываем
+        // РїРµСЂРµСЃС‡РёС‚С‹РІР°РµРј
         for (int j = 0; j < block_expend_size_uints; j++)
         {
             uint f;
             uint k;
-            // в зависимости от раунда считаем по-разному
+            // РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ СЂР°СѓРЅРґР° СЃС‡РёС‚Р°РµРј РїРѕ-СЂР°Р·РЅРѕРјСѓ
             if (j < 20)
             {
                 f = (b & c) | ((~b) & d);
@@ -114,7 +114,7 @@ auto sha1(const std::string& message, const std::string& salt) -> std::shared_pt
                 k = 0xCA62C1D6;
             }
 
-            // перемешивание
+            // РїРµСЂРµРјРµС€РёРІР°РЅРёРµ
             uint temp = cycle_shift_left(a, 5) + f + e + k + exp_block[j];
             e = d;
             d = c;
@@ -122,7 +122,7 @@ auto sha1(const std::string& message, const std::string& salt) -> std::shared_pt
             b = a;
             a = temp;
         }
-        // пересчитываем
+        // РїРµСЂРµСЃС‡РёС‚С‹РІР°РµРј
         A = A + a;
         B = B + b;
         C = C + c;
@@ -130,9 +130,9 @@ auto sha1(const std::string& message, const std::string& salt) -> std::shared_pt
         E = E + e;
     }
 
-    // A,B,C,D,E являются выходными 32-х битными составляющими посчитанного хэша
+    // A,B,C,D,E СЏРІР»СЏСЋС‚СЃСЏ РІС‹С…РѕРґРЅС‹РјРё 32-С… Р±РёС‚РЅС‹РјРё СЃРѕСЃС‚Р°РІР»СЏСЋС‰РёРјРё РїРѕСЃС‡РёС‚Р°РЅРЅРѕРіРѕ С…СЌС€Р°
     std::shared_ptr<PasswordHash> ph = std::make_shared<PasswordHash>();
-    Hash hash; 
+    Hash hash;
     hash._A = A;
     hash._B = B;
     hash._C = C;
@@ -142,7 +142,7 @@ auto sha1(const std::string& message, const std::string& salt) -> std::shared_pt
     ph->setHash(hash);
     ph->setSalt(salt);
 
-    // чистим за собой
+    // С‡РёСЃС‚РёРј Р·Р° СЃРѕР±РѕР№
     delete[] newMessage;
     return ph;
 }
@@ -152,7 +152,7 @@ auto getSalt() -> const std::string
     std::string salt{};
     srand(static_cast<uint>(time(0)));
     auto SaltArrayLength{sizeof(alphanum) - 1}; // -1 for last '\0'
-    for (auto i{0}; i < SALTLENGTH; ++i)
+    for (auto i{0u}; i < SALTLENGTH; ++i)
     {
         salt.push_back(alphanum[rand() % SaltArrayLength]);
     }

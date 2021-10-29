@@ -33,10 +33,15 @@ public:
     auto save(File& file) -> void;
     auto load(File& file, const std::vector<std::shared_ptr<User>>& user) -> void;
 
+    auto isInitialized() -> bool {return isChatInitialized;}
+    auto setInitialized(bool flag) -> void{isChatInitialized = flag;}
+
 private:
     std::vector<std::shared_ptr<Message>> _message_array{};
 
     /* _first_user and _second_user used only Private Chat */
     std::shared_ptr<User> _first_user{nullptr};  /*In _first_user contains the minimum of the two user IDs  */
     std::shared_ptr<User> _second_user{nullptr}; /*In _second_user contains the maximum of the two user IDs  */
+
+    bool isChatInitialized{false};
 };
