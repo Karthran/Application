@@ -77,7 +77,7 @@ inline auto NewMessages::isUserIDExists(int userID) const -> int
     for (auto it = _userIDarray.begin(); it != _userIDarray.end(); ++it)
     {
         if (*it != userID) continue;
-        return it - _userIDarray.begin();
+        return static_cast<int>(it - _userIDarray.begin());
     }
     return BAD_INDEX;
 }

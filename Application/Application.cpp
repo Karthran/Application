@@ -471,7 +471,7 @@ auto Application::privateChat_deleteMessage(
 }
 
 auto Application::getPrivateChat(const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user) const
-    -> const std::shared_ptr<Chat>&
+    -> const std::shared_ptr<Chat>
 {
     long long first_userID{source_user->getUserID()};
     long long second_userID{target_user->getUserID()};
@@ -487,7 +487,7 @@ auto Application::getPrivateChat(const std::shared_ptr<User>& source_user, const
         if (it->first == searchID) return it->second;
     }
 
-    return std::shared_ptr<Chat>();
+    return std::make_shared<Chat>();
 }
 
 auto Application::checkingForStringExistence(const std::string& string, const std::string& (User::*get)() const) const -> int

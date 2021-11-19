@@ -14,9 +14,9 @@ public:
 
     auto printMessages(int first_index, int number) const -> void;
     auto printMessage(int message_index) const -> void;
-    auto addMessage(const std::shared_ptr<User>& user) -> const std::shared_ptr<Message>&;
-    auto deleteMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>&;
-    auto editMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>&;
+    auto addMessage(const std::shared_ptr<User>& user) -> const std::shared_ptr<Message>;
+    auto deleteMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>;
+    auto editMessage(const std::shared_ptr<User>& user, int message_index) -> const std::shared_ptr<Message>;
 
     auto getCurrentMessageNum() const -> int { return static_cast<int>(_message_array.size()); }
 
