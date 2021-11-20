@@ -6,6 +6,7 @@
 
 #include "Application.h"
 #include "Chat.h"
+#include "Message.h"
 #include "Utils.h"
 #include "User.h"
 #include "SHA1.h"
@@ -414,7 +415,7 @@ auto Application::privateChat(const std::shared_ptr<User>& source_user, const st
 auto Application::privateChat_addMessage(
     const std::shared_ptr<User>& source_user, const std::shared_ptr<User>& target_user, std::shared_ptr<Chat>& chat) -> void
 {
-    if (!chat)
+    if (!chat->isInitialized())
     {
         chat = std::make_shared<Chat>();
         long long first_userID{source_user->getUserID()};
@@ -435,8 +436,10 @@ auto Application::privateChat_addMessage(
         }
         _private_chat_array[mapKey] = chat;
         ++_current_chat_number;
+        chat->setInitialized(true);
     }
     auto message{chat->addMessage(source_user)};
+    if (!message->isInitialized()) return;
     auto index{target_user->getUserID()};
     _new_messages_array[index]->addNewMessage(message);
 }
@@ -446,9 +449,11 @@ auto Application::privateChat_editMessage(
     std::cout << std::endl << RESET << YELLOW << "Select message number for editing: " << BOLDGREEN;
     int message_number{Utils::inputIntegerValue()};
     std::cout << RESET;
-    if (chat)
+    if (chat->isInitialized())
     {
         auto message{chat->editMessage(source_user, message_number - 1)};  // array's indices begin from 0, Output indices begin from 1
+        if (!message->isInitialized()) return;
+
         auto index{target_user->getUserID()};
         _new_messages_array[index]->addNewMessage(message);
     }
@@ -460,12 +465,12 @@ auto Application::privateChat_deleteMessage(
     std::cout << std::endl << RESET << YELLOW << "Select message number for deleting: " << BOLDGREEN;
     int message_number{Utils::inputIntegerValue()};
     std::cout << RESET;
-    if (chat)
+    if (chat->isInitialized())
     {
         auto message{chat->deleteMessage(source_user, message_number - 1)};  // array's indices begin from 0, Output indices begin from 1
+        if (!message->isInitialized()) return;
 
         auto index{target_user->getUserID()};
-
         _new_messages_array[index]->removeNewMessage(message);
     }
 }

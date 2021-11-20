@@ -9,7 +9,7 @@ class Message
 public:
     Message() { /*std::cout << "Message constr " << this << std::endl; */};
     Message(const std::string& message, const std::shared_ptr<User>& user, const tm& message_creation_time)
-        : _message(message), _user(user), _message_creation_time(message_creation_time)
+        : _message(message), _user(user), _message_creation_time(message_creation_time), _is_message_initialized(true)
     {
         /*std::cout << "Message constr " << this << std::endl; */
     }
@@ -33,12 +33,15 @@ public:
         _is_edited = true;
     }
 
+    auto isInitialized() -> bool { return _is_message_initialized; }
+
 private:
     std::string _message{};
     std::shared_ptr<User> _user{nullptr};
     tm _message_creation_time{};
-    bool _is_edited = false;
+    bool _is_edited{false};
     tm _message_editing_time{};
+    bool _is_message_initialized{false};
 };
 
 
