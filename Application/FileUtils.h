@@ -6,7 +6,11 @@
 class File
 {
 public:
+#if defined(_WIN32)
     File(const std::string& file_name, std::fstream::_Openmode flags = std::fstream::out)
+#elif defined(__linux__)
+    File(const std::string& file_name, std::ios_base::openmode flags = std::fstream::out)
+#endif
     {
         _fs.open(file_name, flags);
         if (_fs.is_open()) _error = false;
@@ -109,14 +113,13 @@ inline auto File::read(tm& in_tm) -> void
 {
     if (!_fs.is_open()) return;
 
-    _fs >> in_tm.tm_sec ;
-    _fs >> in_tm.tm_min ;
-    _fs >> in_tm.tm_hour ;
-    _fs >> in_tm.tm_mday ;
-    _fs >> in_tm.tm_mon ;
-    _fs >> in_tm.tm_year ;
+    _fs >> in_tm.tm_sec;
+    _fs >> in_tm.tm_min;
+    _fs >> in_tm.tm_hour;
+    _fs >> in_tm.tm_mday;
+    _fs >> in_tm.tm_mon;
+    _fs >> in_tm.tm_year;
     _fs >> in_tm.tm_wday;
-    _fs >> in_tm.tm_yday ;
-    _fs >> in_tm.tm_isdst ;
+    _fs >> in_tm.tm_yday;
+    _fs >> in_tm.tm_isdst;
 }
-
