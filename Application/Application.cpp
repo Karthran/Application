@@ -17,6 +17,7 @@
 Application::Application()
 {
     _common_chat = std::make_shared<Chat>();
+    Utils::getSelfPath(_self_path);
 }
 
 auto Application::run() -> void
@@ -77,7 +78,7 @@ auto Application::createAccount_inputName(std::string& user_name) const -> void
     {
         std::cout << "Name(max " << MAX_INPUT_SIZE << " letters): ";
         std::cout << BOLDGREEN;
-        Utils::getBoundedString(user_name, MAX_INPUT_SIZE);
+        Utils::getString(user_name, MAX_INPUT_SIZE);
         std::cout << RESET;
         const std::string& (User::*get_name)() const = &User::getUserName;
         if (user_name.empty() || checkingForStringExistence(user_name, get_name) != UNSUCCESSFUL)
@@ -99,7 +100,7 @@ auto Application::createAccount_inputLogin(std::string& user_login) const -> voi
     {
         std::cout << std::endl << "Login(max " << MAX_INPUT_SIZE << " letters): ";
         std::cout << BOLDGREEN;
-        Utils::getBoundedString(user_login, MAX_INPUT_SIZE);
+        Utils::getString(user_login, MAX_INPUT_SIZE);
         std::cout << RESET;
         const std::string& (User::*get_login)() const = &User::getUserLogin;
         if (user_login.empty() || checkingForStringExistence(user_login, get_login) != UNSUCCESSFUL)
@@ -118,19 +119,24 @@ auto Application::createAccount_inputPassword(std::string& user_password) const 
     auto isOK{false};
     while (!isOK)
     {
-        std::cout << std::endl << "Password(max " << MAX_INPUT_SIZE << " letters): ";
-        std::cout << BOLDGREEN;
-        Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
-        std::cout << RESET;
+        // std::cout << std::endl << "Password(max " << MAX_INPUT_SIZE << " letters): ";
+        // std::cout << BOLDGREEN;
+        // Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
+        // std::cout << RESET;
+
+        Utils::getPassword(user_password, "Password(max " + std::to_string(MAX_INPUT_SIZE) + " letters): ");
 
         if (user_password.empty()) continue;
 
-        std::cout << std::endl << "Re-enter your password: ";
-        std::cout << BOLDGREEN;
+        //std::cout << std::endl << "Re-enter your password: ";
+        //std::cout << BOLDGREEN;
 
         std::string check_user_password;
-        Utils::getBoundedString(check_user_password, MAX_INPUT_SIZE, true);
-        std::cout << RESET;
+//        Utils::getBoundedString(check_user_password, MAX_INPUT_SIZE, true);
+        
+        Utils::getPassword(check_user_password, "Re-enter your password: ");
+
+       // std::cout << RESET;
         if (user_password != check_user_password)
         {
             std::cout << std::endl << RED << "Password don't match!" << RESET;
@@ -183,17 +189,21 @@ auto Application::signIn_inputLogin(std::string& user_login) const -> int
 {
     std::cout << RESET << "Login:";
     std::cout << BOLDGREEN;
-    std::cin >> user_login;
+
+    Utils::getString(user_login);
+
     std::cout << RESET;
     const std::string& (User::*get_login)() const = &User::getUserLogin;
     return checkingForStringExistence(user_login, get_login);
 }
 auto Application::signIn_inputPassword(std::string& user_password) const -> void
 {
-    std::cout << RESET << "Password:";
-    std::cout << BOLDGREEN;
-    Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
-    std::cout << RESET << std::endl;
+    //std::cout << RESET << "Password:";
+    //std::cout << BOLDGREEN;
+    //Utils::getBoundedString(user_password, MAX_INPUT_SIZE, true);
+    //std::cout << RESET << std::endl;
+
+    Utils::getPassword(user_password, "Password: ");
 }
 
 auto Application::selectCommonOrPrivate(const std::shared_ptr<User>& user) -> int
@@ -536,7 +546,7 @@ auto Application::save() -> void
 auto Application::saveUserArray() const -> bool
 {
     // Save vector<User>
-    File file_user("User.txt", std::fstream::out);
+    File file_user(_self_path + std::string("User.txt"), std::fstream::out);
     if (file_user.getError()) return false;
 
     file_user.write(_user_array.size());
@@ -553,7 +563,7 @@ auto Application::saveUserArray() const -> bool
 auto Application::savePasswordHash() -> void
 {
     // Save _password_hash
-    File file_hash("UserHash.txt", std::fstream::out);
+    File file_hash(_self_path + std::string("UserHash.txt"), std::fstream::out);
     for (auto i{0}; i < _user_array.size(); ++i)
     {
         file_hash.write(_password_hash[_user_array[i]->getUserLogin()]->getSalt());
@@ -569,7 +579,7 @@ auto Application::savePasswordHash() -> void
 auto Application::saveChats() const -> void
 {
     // Save Chats (Common and Privats)
-    File file_chat("Chat.txt", std::fstream::out);
+    File file_chat(_self_path + std::string("Chat.txt"), std::fstream::out);
 
     _common_chat->save(file_chat);
 
@@ -584,7 +594,7 @@ auto Application::saveChats() const -> void
 auto Application::saveNewMessages() -> void
 {
     // Save New Messages (Common and Privats)
-    File file_newmsg("NewMessages.txt", std::fstream::out);
+    File file_newmsg(_self_path + std::string("NewMessages.txt"), std::fstream::out);
 
     auto target_users_number{_new_messages_array.size()};
     file_newmsg.write(target_users_number);
@@ -632,7 +642,7 @@ auto Application::load() -> void
 // Load vector<User>
 auto Application::loadUserArray() -> bool
 {
-    File file_user("User.txt", std::fstream::in);
+    File file_user(_self_path + std::string("User.txt"), std::fstream::in);
 
     if (file_user.getError()) return false;
 
@@ -661,7 +671,7 @@ auto Application::loadUserArray() -> bool
 // Load Password Hash
 auto Application::loadPasswordHash() -> void
 {
-    File file_hash("UserHash.txt", std::fstream::in);
+    File file_hash(_self_path + std::string("UserHash.txt"), std::fstream::in);
     for (auto i{0}; i < _user_array.size(); ++i)
     {
         std::string salt{};
@@ -679,7 +689,7 @@ auto Application::loadPasswordHash() -> void
 // Load Chats (Common and Privats)
 auto Application::loadChats() -> void
 {
-    File file_chat("Chat.txt", std::fstream::in);
+    File file_chat(_self_path + std::string("Chat.txt"), std::fstream::in);
 
     int user1{0}, user2{0};
     file_chat.read(user1);
@@ -711,7 +721,7 @@ auto Application::loadChats() -> void
 auto Application::loadNewMessages() -> void
 {
     // Load New Messages (Common and Privats)
-    File file_newmsg("NewMessages.txt", std::fstream::in);
+    File file_newmsg(_self_path + std::string("NewMessages.txt"), std::fstream::in);
     if (file_newmsg.getError()) return;
     auto user_number{0};
     file_newmsg.read(user_number);

@@ -26,6 +26,7 @@ const int SUCCESSFUL  = 1;
 const int MAX_MESSAGES_IN_CHAT = 10000;
 const int MESSAGES_ON_PAGE = 5;
 const int LINE_TO_PAGE = 15;
+const int IGNORED_NUM = 0xffff;
 
 class Utils
 {
@@ -34,7 +35,9 @@ public:
     static auto inputIntegerValue() -> int;
     static auto printTimeAndData(const tm& timeinfo) -> void;
     static auto getBoundedString(std::string& string, int size, bool hidden = false) -> void;
-    static auto getString(std::string& string, int size) -> void;
+    static auto getString(std::string& string, size_t size = 0) -> void;
+    static auto getPassword(std::string& string, const std::string& text) -> void;
+    static auto getSelfPath(std::string& path) -> void;	 
 
     template <typename T>
     static auto minToMaxOrder(T& min, T& max) -> bool;

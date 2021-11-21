@@ -30,6 +30,8 @@ private:
 
     std::vector<std::shared_ptr<NewMessages>> _new_messages_array;
 
+    std::string _self_path{};
+
     auto createAccount() -> int;
     auto createAccount_inputName(std::string& name) const -> void;
     auto createAccount_inputLogin(std::string& login) const -> void;

@@ -12,7 +12,7 @@
 
 Chat::Chat()
 {
-   /* std::cout << "Chat constr " << this << std::endl;*/
+    /* std::cout << "Chat constr " << this << std::endl;*/
 }
 
 Chat::~Chat()
@@ -78,7 +78,11 @@ auto Chat::addMessage(const std::shared_ptr<User>& user) -> const std::shared_pt
 
         time_t seconds{time(NULL)};
         tm timeinfo;
+#if defined(_WIN32)
         localtime_s(&timeinfo, &seconds);
+#elif defined(__linux__)
+        localtime_r(&seconds, &timeinfo);
+#endif
 
         _message_array.push_back(std::make_shared<Message>(new_message, user, timeinfo));
         return _message_array[_message_array.size() - 1];
@@ -137,8 +141,11 @@ auto Chat::editMessage(const std::shared_ptr<User>& user, int message_index) -> 
 
         time_t seconds{time(NULL)};
         tm timeinfo;
-        localtime_s(&timeinfo, &seconds);
-
+#if defined(_WIN32)
+        localtime_s(&timeinfo, &seconds);  // TODO
+#elif defined(__linux__)
+        localtime_r(&seconds, &timeinfo);
+#endif
         _message_array[message_index]->editedMessage(new_message, timeinfo);
 
         return _message_array[message_index];
@@ -190,16 +197,16 @@ auto Chat::save(File& file) -> void
 
 auto Chat::load(File& file, const std::vector<std::shared_ptr<User>>& user) -> void
 {
-  
+
     size_t message_number{0};
     file.read(message_number);
     for (auto i{0u}; i < message_number; ++i)
     {
         auto msg_size{0};
         file.read(msg_size);
-        char* str = new char[msg_size + 2]{};         //+1 for '\0' , +1 for separator
-        file.getStream().getline(str, msg_size + 2,'\n');  //
-        std::string message(str + 1);                 // skip the separator
+        char* str = new char[msg_size + 2]{};               //+1 for '\0' , +1 for separator
+        file.getStream().getline(str, msg_size + 2, '\n');  //
+        std::string message(str + 1);                       // skip the separator
 
         delete[] str;
 

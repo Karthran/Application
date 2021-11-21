@@ -1,6 +1,12 @@
 #include <iostream>
-#include <conio.h>
 #include <iomanip>
+
+#if defined(_WIN32)
+#include <conio.h>
+#elif defined(__linux__)
+#include <unistd.h>
+#include <limits.h>
+#endif
 
 #include "Utils.h"
 
@@ -15,19 +21,21 @@ auto Utils::isOKSelect() -> bool
 auto Utils::inputIntegerValue() -> int
 {
     auto value{UNSUCCESSFUL};
+
     while (true)
     {
         std::cin >> value;
-        if (std::cin.fail())  
+
+        if (std::cin.fail())
         {
-            std::cin.clear();                                                    
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+            std::cin.clear();
+            std::cin.ignore(IGNORED_NUM, '\n');
             std::cout << "Incorrect value entered!" << std::endl;
             std::cout << "Try again: ";
         }
         else
         {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cin.ignore(IGNORED_NUM, '\n');
             return value;
         }
     }
@@ -66,10 +74,56 @@ auto Utils::getBoundedString(std::string& string, int size, bool hidden) -> void
     }
 }
 
-auto Utils::getString(std::string& string, int size) -> void
+auto Utils::getString(std::string& string, size_t size) -> void
 {
-    char char_string[MAX_INPUT_SIZE];
-    std::cin.getline(char_string, size);
-    string = char_string;
+    std::cin >> string;
+    std::cin.ignore(IGNORED_NUM, '\n');
+    if (size && size < string.size()) string.resize(size);
 }
 
+auto Utils::getPassword(std::string& password, const std::string& text) -> void
+{
+    std::cout << std::endl << text;
+    std::cout << BOLDGREEN;
+
+#if defined(_WIN32)
+    auto c{' '};
+    auto i{0};
+    password.erase();
+    while ((c = _getch()) != '\r')
+    {
+        password.push_back(c);
+        _putch('*');
+        if (++i == MAX_INPUT_SIZE)
+        {
+            while (_getch() != '\r')
+            {
+            }
+            break;
+        }
+    }
+#elif defined(__linux__)
+    password = std::string(getpass(text.c_str()));
+#endif
+    std::cout << RESET << std::endl;
+}
+
+auto Utils::getSelfPath(std::string& path) -> void 
+{
+#if defined(_WIN32)
+    path.erase();
+#elif defined(__linux__)
+    char buff[PATH_MAX];
+    ssize_t len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
+    if (len != -1)
+    {
+        for (auto i{len - 1}; i >= 0; --i)
+        {
+            if (buff[i] != '/') continue;
+            buff[i + 1] = '\0';
+            path = std::string(buff);
+            break;
+        }
+    }
+#endif
+}
