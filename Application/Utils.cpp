@@ -83,10 +83,11 @@ auto Utils::getString(std::string& string, size_t size) -> void
 
 auto Utils::getPassword(std::string& password, const std::string& text) -> void
 {
+#if defined(_WIN32)
+
     std::cout << std::endl << text;
     std::cout << BOLDGREEN;
 
-#if defined(_WIN32)
     auto c{' '};
     auto i{0};
     password.erase();
