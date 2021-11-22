@@ -22,7 +22,9 @@ Application::Application()
 
 auto Application::run() -> void
 {
-    std::cout << BOLDYELLOW << UNDER_LINE << "Wellcome to Console Chat!" << RESET << std::endl;
+    Utils::printOSVersion();
+
+    std::cout << std::endl << BOLDYELLOW << UNDER_LINE << "Wellcome to Console Chat!" << RESET << std::endl;
 
     load();
 

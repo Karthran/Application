@@ -3,9 +3,14 @@
 
 #if defined(_WIN32)
 #include <conio.h>
+#include <windows.h>
+#include <VersionHelpers.h>
+
 #elif defined(__linux__)
 #include <unistd.h>
 #include <limits.h>
+#include <sys/utsname.h>
+
 #endif
 
 #include "Utils.h"
@@ -52,7 +57,7 @@ auto Utils::printTimeAndData(const tm& timeinfo) -> void
     std::cout << timeinfo.tm_year + 1900 << std::endl;
 }
 
-//auto Utils::getBoundedString(std::string& string, int size, bool hidden) -> void
+// auto Utils::getBoundedString(std::string& string, int size, bool hidden) -> void
 //{
 //    auto c{' '};
 //    auto i{0};
@@ -109,7 +114,7 @@ auto Utils::getPassword(std::string& password, const std::string& text) -> void
     std::cout << RESET << std::endl;
 }
 
-auto Utils::getSelfPath(std::string& path) -> void 
+auto Utils::getSelfPath(std::string& path) -> void
 {
 #if defined(_WIN32)
     path.erase();
@@ -128,3 +133,53 @@ auto Utils::getSelfPath(std::string& path) -> void
     }
 #endif
 }
+
+auto Utils::printOSVersion() -> void
+{
+#if defined(_WIN32)
+
+    std::cout << std::endl;
+    std::cout << "OS name: Windows"  << std::endl;
+    std::cout << "OS version: " << getWindowsVersionName() << std::endl;
+
+#elif defined(__linux__)
+
+    struct utsname utsname;  // объект для структуры типа utsname
+    uname(&utsname);  // передаем объект по ссылке
+
+    std::cout << std::endl;
+    std::cout << "OS name: " << utsname.sysname << std::endl;
+    std::cout << "OS version: " << utsname.version << std::endl;
+
+#endif
+}
+#if defined(_WIN32)
+auto Utils::getWindowsVersionName() -> const char*
+{
+    if (IsWindows10OrGreater())
+    {
+        return "10";
+    }
+    if (IsWindows8Point1OrGreater())
+    {
+        return "8.1";
+    }
+    if (IsWindows8OrGreater())
+    {
+        return "8";
+    }
+    if (IsWindows7OrGreater())
+    {
+        return "7";
+    }
+    if (IsWindowsVistaOrGreater())
+    {
+        return "Vista";
+    }
+    if (IsWindowsXPOrGreater())
+    {
+        return "XP";
+    }
+    return "Unknown";
+}
+#endif

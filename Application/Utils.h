@@ -22,7 +22,7 @@ const std::string BOLDWHITE = "\033[1m\033[37m";   /* Bold White */
 
 const int MAX_INPUT_SIZE = 30;
 const int UNSUCCESSFUL = -1;
-const int SUCCESSFUL  = 1;
+const int SUCCESSFUL = 1;
 const int MAX_MESSAGES_IN_CHAT = 10000;
 const int MESSAGES_ON_PAGE = 5;
 const int LINE_TO_PAGE = 15;
@@ -34,16 +34,21 @@ public:
     static auto isOKSelect() -> bool;
     static auto inputIntegerValue() -> int;
     static auto printTimeAndData(const tm& timeinfo) -> void;
-//    static auto getBoundedString(std::string& string, int size, bool hidden = false) -> void;
+    //    static auto getBoundedString(std::string& string, int size, bool hidden = false) -> void;
     static auto getString(std::string& string, size_t size = 0) -> void;
     static auto getPassword(std::string& string, const std::string& text) -> void;
-    static auto getSelfPath(std::string& path) -> void;	 
+    static auto getSelfPath(std::string& path) -> void;
+    static auto printOSVersion() -> void;
 
     template <typename T>
     static auto minToMaxOrder(T& min, T& max) -> bool;
 
     template <typename T>
     static auto sign(T val) -> int;
+
+#if defined(_WIN32)
+    static auto getWindowsVersionName() -> const char*;
+#endif
 };
 
 template <typename T>
