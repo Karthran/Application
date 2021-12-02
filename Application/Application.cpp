@@ -401,7 +401,7 @@ auto Application::privateChat(const std::shared_ptr<User>& source_user, const st
         switch (menu_item)
         {
             case 1:
-                if (currentChat)
+                if (currentChat.get()->isInitialized())
                 {
                     std::cout << std::endl;
                     currentChat->printMessages(0, currentChat->getCurrentMessageNum());
